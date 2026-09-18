@@ -1,0 +1,2014 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نور العقل - الأسطورة النهائية</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+  html, body { overflow-x: hidden; }
+  body {
+    background: var(--bg1, #05010f);
+    color: #f0e9ff; min-height: 100vh; display: flex; justify-content: center;
+    align-items: center; padding: 15px; position: relative;
+    transition: background 0.6s;
+  }
+  /* ثيمات الألوان */
+  body.theme-royal { --bg1: #05010f; --accent1: #a855f7; --accent2: #fbbf24; --accent3: #ec4899; }
+  body.theme-ocean { --bg1: #021420; --accent1: #06b6d4; --accent2: #10b981; --accent3: #3b82f6; }
+  body.theme-sunset { --bg1: #1a0505; --accent1: #f97316; --accent2: #ec4899; --accent3: #fbbf24; }
+  body.theme-forest { --bg1: #021a0a; --accent1: #10b981; --accent2: #84cc16; --accent3: #22d3ee; }
+  body.theme-galaxy { --bg1: #0a0520; --accent1: #8b5cf6; --accent2: #22d3ee; --accent3: #f472b6; }
+
+  body::before {
+    content: ''; position: fixed; inset: -50%; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(circle at 20% 30%, color-mix(in srgb, var(--accent1, #a855f7) 35%, transparent), transparent 35%),
+      radial-gradient(circle at 80% 20%, color-mix(in srgb, var(--accent3, #ec4899) 25%, transparent), transparent 35%),
+      radial-gradient(circle at 50% 80%, color-mix(in srgb, var(--accent2, #22d3ee) 30%, transparent), transparent 40%);
+    animation: aurora 20s ease-in-out infinite alternate;
+  }
+  @keyframes aurora {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.2); }
+    100% { transform: rotate(360deg) scale(1); }
+  }
+
+  .container {
+    width: 100%; max-width: 850px; position: relative; z-index: 2;
+    background: linear-gradient(145deg, rgba(30, 15, 60, 0.85), rgba(15, 5, 35, 0.92));
+    border-radius: 32px; padding: 28px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(168, 85, 247, 0.4),
+                0 0 80px rgba(168, 85, 247, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(25px);
+    transition: all 0.4s;
+  }
+
+  h1 {
+    text-align: center; font-size: 36px; margin-bottom: 8px;
+    background: linear-gradient(90deg, #fbbf24, #f472b6, #a855f7, #22d3ee, #34d399, #fbbf24);
+    background-size: 400% 100%;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; animation: rainbowText 8s linear infinite;
+    font-weight: 900; filter: drop-shadow(0 0 25px rgba(168, 85, 247, 0.6));
+  }
+  @keyframes rainbowText {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 400% 50%; }
+  }
+  .subtitle { text-align: center; color: #c4b5fd; font-size: 13px; margin-bottom: 20px; }
+
+  .screen { display: none; }
+  .screen.active { display: block; animation: fadeIn 0.5s ease; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* اسم اللاعب */
+  .player-input-wrap {
+    text-align: center; margin-bottom: 20px;
+  }
+  .player-input-wrap label { color: #fbbf24; font-size: 14px; display: block; margin-bottom: 8px; font-weight: bold; }
+  .player-input-wrap input {
+    padding: 12px 20px; border-radius: 14px; border: 2px solid rgba(196, 181, 253, 0.4);
+    background: rgba(76, 29, 149, 0.4); color: #fff; font-size: 16px;
+    text-align: center; width: 250px; font-family: inherit;
+    transition: all 0.3s;
+  }
+  .player-input-wrap input:focus {
+    outline: none; border-color: #fbbf24; box-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
+  }
+
+  /* اللاعب XP */
+  .player-xp {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 15px; background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(168, 85, 247, 0.15));
+    border-radius: 14px; margin-bottom: 15px; font-size: 14px;
+    border: 1px solid rgba(251, 191, 36, 0.3);
+  }
+  .player-xp .name { color: #fbbf24; font-weight: bold; }
+  .player-xp .coins { color: #fbbf24; font-weight: bold; }
+  .xp-bar {
+    flex: 1; height: 8px; background: rgba(255,255,255,0.1); border-radius: 8px;
+    margin: 0 12px; overflow: hidden;
+  }
+  .xp-fill {
+    height: 100%; background: linear-gradient(90deg, #fbbf24, #ec4899);
+    border-radius: 8px; transition: width 0.5s;
+    box-shadow: 0 0 10px rgba(251, 191, 36, 0.7);
+  }
+
+  .cat-title { color: #fbbf24; font-size: 17px; margin-bottom: 12px; font-weight: bold; text-align: center; }
+  .category-buttons { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+  .cat-btn {
+    padding: 22px 26px; font-size: 16px; border-radius: 22px; cursor: pointer;
+    border: 2px solid; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    color: #fff; font-weight: bold; min-width: 190px;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    position: relative; overflow: hidden; font-family: inherit;
+  }
+  .cat-btn::before {
+    content: ''; position: absolute; inset: 0; opacity: 0;
+    background: radial-gradient(circle at center, rgba(255,255,255,0.4), transparent 70%);
+    transition: opacity 0.4s;
+  }
+  .cat-btn:hover::before { opacity: 1; }
+  .cat-btn .icon { font-size: 42px; filter: drop-shadow(0 0 15px currentColor); }
+  .cat-btn.religious {
+    background: linear-gradient(135deg, #064e3b, #10b981, #34d399);
+    border-color: #6ee7b7;
+    box-shadow: 0 10px 40px rgba(16, 185, 129, 0.5);
+  }
+  .cat-btn.scientific {
+    background: linear-gradient(135deg, #4c1d95, #7c3aed, #ec4899);
+    border-color: #c4b5fd;
+    box-shadow: 0 10px 40px rgba(124, 58, 237, 0.5);
+  }
+  .cat-btn:hover { transform: translateY(-8px) scale(1.05); }
+
+  .diff-section { margin-top: 20px; text-align: center; }
+  .diff-buttons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
+  .diff-btn {
+    padding: 10px 18px; font-size: 14px; border-radius: 12px; cursor: pointer;
+    border: 2px solid rgba(196, 181, 253, 0.4); background: rgba(76, 29, 149, 0.4);
+    color: #e9d5ff; font-weight: bold; transition: all 0.3s; font-family: inherit;
+  }
+  .diff-btn:hover { transform: translateY(-3px); border-color: #fbbf24; }
+  .diff-btn.active {
+    background: linear-gradient(135deg, #fbbf24, #f472b6);
+    color: #0a0620; border-color: #fbbf24;
+    box-shadow: 0 0 25px rgba(251, 191, 36, 0.6);
+  }
+
+  /* أزرار جانبية */
+  .side-buttons {
+    display: flex; justify-content: center; gap: 10px; margin-top: 15px; flex-wrap: wrap;
+  }
+  .mini-btn {
+    padding: 10px 16px; font-size: 13px; border-radius: 12px; cursor: pointer;
+    border: 1px solid rgba(196, 181, 253, 0.4); background: rgba(76, 29, 149, 0.4);
+    color: #e9d5ff; font-weight: bold; transition: all 0.3s; font-family: inherit;
+  }
+  .mini-btn:hover { background: rgba(124, 58, 237, 0.6); transform: translateY(-2px); }
+
+  /* لوحة الصدارة */
+  .leaderboard {
+    margin-top: 20px; padding: 16px; border-radius: 18px;
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(168, 85, 247, 0.1));
+    border: 1px solid rgba(251, 191, 36, 0.3);
+  }
+  .leaderboard h3 { color: #fbbf24; margin-bottom: 12px; font-size: 16px; text-align: center; }
+  .lb-row {
+    display: flex; justify-content: space-between; padding: 8px 12px;
+    border-radius: 10px; margin-bottom: 5px; font-size: 13px;
+    background: rgba(255,255,255,0.03);
+  }
+  .lb-row.top1 { background: linear-gradient(90deg, rgba(251, 191, 36, 0.25), transparent); color: #fbbf24; font-weight: bold; }
+  .lb-row.top2 { background: linear-gradient(90deg, rgba(192, 192, 192, 0.2), transparent); }
+  .lb-row.top3 { background: linear-gradient(90deg, rgba(205, 127, 50, 0.2), transparent); }
+
+  /* شريط الإحصائيات */
+  .top-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 12px; flex-wrap: wrap; gap: 8px;
+  }
+  .stat-box {
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(34, 211, 238, 0.12));
+    padding: 7px 13px; border-radius: 12px; font-size: 13px;
+    border: 1px solid rgba(196, 181, 253, 0.3);
+  }
+  .stat-box span { color: #fbbf24; font-weight: bold; font-size: 15px; }
+  .streak-box { background: linear-gradient(135deg, #f97316, #ef4444); border-color: #fbbf24; }
+  .streak-box span { color: #fff !important; }
+  .streak-box.hot { animation: streakFire 0.6s infinite; }
+  @keyframes streakFire {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(251, 146, 60, 0.6); }
+    50% { transform: scale(1.05); box-shadow: 0 0 25px rgba(251, 146, 60, 1); }
+  }
+  .surprise-box { background: linear-gradient(135deg, #fbbf24, #ec4899); animation: surpriseGlow 1s infinite; }
+  .surprise-box span { color: #0a0620 !important; }
+  @keyframes surpriseGlow {
+    0%, 100% { box-shadow: 0 0 10px rgba(251, 191, 36, 0.6); }
+    50% { box-shadow: 0 0 30px rgba(251, 191, 36, 1); }
+  }
+
+  .progress-bar {
+    width: 100%; height: 10px; background: rgba(255,255,255,0.06);
+    border-radius: 10px; overflow: hidden; margin-bottom: 12px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+  }
+  .progress-fill {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, #22d3ee, #a855f7, #f472b6, #fbbf24);
+    background-size: 300% 100%;
+    transition: width 0.5s; border-radius: 10px;
+    animation: shimmer 3s linear infinite;
+  }
+  @keyframes shimmer {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+  }
+
+  .timer-container {
+    display: flex; justify-content: center; align-items: center;
+    margin: 5px auto 12px; width: 80px; height: 80px; position: relative;
+  }
+  .timer-svg { transform: rotate(-90deg); width: 80px; height: 80px; }
+  .timer-bg { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 6; }
+  .timer-fg {
+    fill: none; stroke: url(#timerGradient); stroke-width: 6;
+    stroke-linecap: round; transition: stroke-dashoffset 1s linear;
+  }
+  .timer-text {
+    position: absolute; inset: 0; display: flex;
+    justify-content: center; align-items: center;
+    font-size: 22px; font-weight: 800; color: #22d3ee;
+    text-shadow: 0 0 15px rgba(34, 211, 238, 0.8);
+  }
+  .timer-text.warning { color: #f87171; animation: pulseWarn 0.5s infinite; }
+  @keyframes pulseWarn {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+  }
+
+  .question-box {
+    background: linear-gradient(135deg, rgba(76, 29, 149, 0.6), rgba(30, 58, 138, 0.5));
+    padding: 20px; border-radius: 20px; margin-bottom: 15px;
+    border-right: 5px solid;
+    border-image: linear-gradient(180deg, #fbbf24, #f472b6, #a855f7) 1;
+    min-height: 90px; display: flex; align-items: center;
+    font-size: 18px; line-height: 1.7; color: #f5f3ff;
+  }
+  .surprise-question {
+    border-image: linear-gradient(180deg, #fbbf24, #ef4444, #fbbf24) 1 !important;
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.3), rgba(239, 68, 68, 0.3)) !important;
+    animation: surpriseGlow 1s infinite;
+  }
+
+  .answers { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 520px) { .answers { grid-template-columns: 1fr; } }
+
+  .answer-btn {
+    padding: 15px 17px; font-size: 15px; border-radius: 16px; cursor: pointer;
+    background: linear-gradient(135deg, rgba(76, 29, 149, 0.7), rgba(55, 48, 163, 0.7));
+    color: #f0e9ff; border: 2px solid rgba(196, 181, 253, 0.3);
+    transition: all 0.28s; text-align: right; font-family: inherit; font-weight: 500;
+    position: relative; overflow: hidden;
+  }
+  .answer-btn::after {
+    content: ''; position: absolute; top: 0; right: -100%; width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: right 0.5s;
+  }
+  .answer-btn:hover:not(:disabled)::after { right: 100%; }
+  .answer-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.9), rgba(79, 70, 229, 0.9));
+    border-color: #c4b5fd; transform: translateX(-5px);
+  }
+  .answer-btn.correct {
+    background: linear-gradient(135deg, #059669, #10b981, #34d399) !important;
+    border-color: #6ee7b7 !important; color: #fff !important;
+    animation: pulseCorrect 0.6s; box-shadow: 0 0 40px rgba(16, 185, 129, 0.9);
+  }
+  .answer-btn.wrong {
+    background: linear-gradient(135deg, #991b1b, #dc2626, #f87171) !important;
+    border-color: #fca5a5 !important; color: #fff !important;
+    animation: shake 0.5s; box-shadow: 0 0 40px rgba(220, 38, 38, 0.9);
+  }
+  .answer-btn.eliminated { opacity: 0.25; text-decoration: line-through; pointer-events: none; }
+  .answer-btn:disabled { cursor: not-allowed; opacity: 0.85; }
+
+  @keyframes pulseCorrect {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.07); }
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-10px); }
+    40% { transform: translateX(10px); }
+    60% { transform: translateX(-8px); }
+    80% { transform: translateX(8px); }
+  }
+
+  .feedback {
+    text-align: center; font-size: 17px; margin-top: 12px;
+    min-height: 28px; font-weight: bold; transition: all 0.3s;
+  }
+
+  .action-row {
+    display: flex; justify-content: center; gap: 10px; margin-top: 15px; flex-wrap: wrap;
+  }
+
+  .next-btn, .restart-btn, .help-btn, .pause-btn {
+    padding: 13px 30px; font-size: 15px;
+    border-radius: 16px; cursor: pointer; font-weight: bold; border: none;
+    font-family: inherit; transition: all 0.35s;
+  }
+  .next-btn, .restart-btn {
+    background: linear-gradient(135deg, #22d3ee, #a855f7, #f472b6, #fbbf24);
+    background-size: 300% 100%;
+    color: #0a0620;
+    box-shadow: 0 10px 35px rgba(168, 85, 247, 0.6);
+    animation: shimmer 3s linear infinite;
+  }
+  .next-btn:hover, .restart-btn:hover { transform: scale(1.07); }
+  .help-btn {
+    background: linear-gradient(135deg, #fbbf24, #f97316);
+    color: #0a0620;
+  }
+  .help-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .pause-btn {
+    background: linear-gradient(135deg, #6b7280, #374151);
+    color: #fff;
+  }
+
+  .result-score {
+    font-size: 66px; font-weight: 900; margin: 18px 0;
+    background: linear-gradient(90deg, #fbbf24, #f472b6, #a855f7, #22d3ee);
+    background-size: 400% 100%;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; animation: rainbowText 4s linear infinite;
+  }
+  .result-msg { font-size: 18px; margin-bottom: 15px; line-height: 1.7; color: #e9d5ff; text-align: center; }
+
+  .badges { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 15px 0; }
+  .badge {
+    padding: 10px 15px; border-radius: 14px; font-size: 13px; font-weight: bold;
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(244, 114, 182, 0.2));
+    border: 2px solid rgba(251, 191, 36, 0.5); color: #fbbf24;
+    animation: badgePop 0.5s ease;
+  }
+  @keyframes badgePop {
+    0% { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .sound-toggle, .theme-toggle, .pause-toggle {
+    position: fixed; z-index: 100;
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.9), rgba(34, 211, 238, 0.8));
+    border: 2px solid rgba(196, 181, 253, 0.6); color: #fff;
+    padding: 10px 14px; border-radius: 14px; cursor: pointer;
+    font-size: 18px; backdrop-filter: blur(10px);
+    transition: all 0.3s;
+  }
+  .sound-toggle { top: 15px; left: 15px; }
+  .theme-toggle { top: 15px; right: 15px; }
+  .pause-toggle { top: 15px; left: 70px; display: none; }
+  .sound-toggle:hover, .theme-toggle:hover, .pause-toggle:hover { transform: scale(1.1); }
+
+  .star-burst {
+    position: fixed; pointer-events: none; font-size: 40px;
+    animation: starFly 1.2s ease-out forwards; z-index: 999;
+  }
+  @keyframes starFly {
+    0% { transform: translate(0, 0) scale(0); opacity: 1; }
+    100% { transform: translate(var(--dx), var(--dy)) scale(1.5); opacity: 0; }
+  }
+
+  .coin-fly {
+    position: fixed; pointer-events: none; font-size: 30px;
+    animation: coinFly 1s ease-out forwards; z-index: 999;
+  }
+  @keyframes coinFly {
+    0% { transform: translateY(0) scale(0.5); opacity: 1; }
+    100% { transform: translateY(-150px) scale(1.5); opacity: 0; }
+  }
+
+  /* نافذة الإحصائيات */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+    z-index: 500; display: none; justify-content: center; align-items: center;
+    padding: 15px; backdrop-filter: blur(5px);
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: linear-gradient(145deg, #1e0f3c, #0f0523);
+    border: 2px solid rgba(168, 85, 247, 0.5); border-radius: 25px;
+    padding: 25px; max-width: 500px; width: 100%;
+    max-height: 85vh; overflow-y: auto;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9);
+  }
+  .modal h2 { color: #fbbf24; margin-bottom: 15px; text-align: center; }
+  .modal .stat-line {
+    display: flex; justify-content: space-between;
+    padding: 10px 15px; margin-bottom: 8px;
+    background: rgba(255,255,255,0.05); border-radius: 10px;
+    font-size: 14px;
+  }
+  .modal .stat-line span:first-child { color: #c4b5fd; }
+  .modal .stat-line span:last-child { color: #fbbf24; font-weight: bold; }
+  .modal-close {
+    display: block; margin: 15px auto 0; padding: 12px 30px;
+    border-radius: 14px; border: none; cursor: pointer;
+    background: linear-gradient(135deg, #fbbf24, #ec4899);
+    color: #0a0620; font-weight: bold; font-family: inherit;
+    font-size: 15px;
+  }
+
+  /* قائمة الشارات */
+  .badges-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px; margin-top: 15px;
+  }
+  .badge-card {
+    padding: 15px; border-radius: 16px; text-align: center;
+    background: rgba(255,255,255,0.04);
+    border: 2px solid rgba(196, 181, 253, 0.2);
+    transition: all 0.3s;
+  }
+  .badge-card.unlocked {
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(244, 114, 182, 0.15));
+    border-color: #fbbf24;
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+  }
+  .badge-card.locked { opacity: 0.4; }
+  .badge-card .icon { font-size: 32px; margin-bottom: 6px; }
+  .badge-card .name { font-size: 12px; color: #fbbf24; font-weight: bold; }
+  .badge-card .desc { font-size: 10px; color: #c4b5fd; margin-top: 4px; }
+
+  /* متجر */
+  .shop-grid {
+    display: grid; grid-template-columns: 1fr; gap: 12px;
+  }
+  .shop-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 15px; border-radius: 14px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(196, 181, 253, 0.2);
+  }
+  .shop-item .info { flex: 1; }
+  .shop-item .name { color: #fbbf24; font-weight: bold; margin-bottom: 4px; }
+  .shop-item .desc { font-size: 12px; color: #c4b5fd; }
+  .shop-buy {
+    padding: 8px 16px; border-radius: 10px; border: none; cursor: pointer;
+    background: linear-gradient(135deg, #fbbf24, #ec4899);
+    color: #0a0620; font-weight: bold; font-family: inherit;
+    font-size: 13px;
+  }
+  .shop-buy:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* نافذة المراجعة */
+  .review-item {
+    padding: 12px; margin-bottom: 10px; border-radius: 12px;
+    background: rgba(255,255,255,0.04);
+    border-right: 4px solid #ef4444;
+  }
+  .review-item .q { color: #f5f3ff; font-size: 14px; margin-bottom: 6px; }
+  .review-item .ans { color: #34d399; font-size: 13px; font-weight: bold; }
+
+  /* تحدي يومي */
+  .daily-banner {
+    background: linear-gradient(135deg, #fbbf24, #ec4899);
+    color: #0a0620; padding: 12px 18px; border-radius: 14px;
+    margin-bottom: 15px; font-weight: bold; text-align: center;
+    animation: dailyShine 2s infinite;
+  }
+  @keyframes dailyShine {
+    0%, 100% { box-shadow: 0 0 15px rgba(251, 191, 36, 0.5); }
+    50% { box-shadow: 0 0 35px rgba(251, 191, 36, 1); }
+  }
+
+  /* شخصيات */
+  .chars-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0;
+  }
+  .char-card {
+    padding: 15px 10px; border-radius: 16px; text-align: center;
+    background: rgba(255,255,255,0.04);
+    border: 2px solid rgba(196, 181, 253, 0.2);
+    cursor: pointer; transition: all 0.3s;
+  }
+  .char-card:hover { transform: translateY(-3px); }
+  .char-card.selected {
+    border-color: #fbbf24;
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(244, 114, 182, 0.2));
+    box-shadow: 0 0 25px rgba(251, 191, 36, 0.5);
+  }
+  .char-card .icon { font-size: 36px; margin-bottom: 5px; }
+  .char-card .name { font-size: 13px; color: #fbbf24; font-weight: bold; }
+  .char-card .bonus { font-size: 10px; color: #c4b5fd; margin-top: 3px; }
+
+  /* Pause overlay */
+  .pause-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+    z-index: 400; display: none; justify-content: center; align-items: center;
+    flex-direction: column; gap: 20px;
+  }
+  .pause-overlay.active { display: flex; }
+  .pause-overlay h2 { color: #fbbf24; font-size: 32px; }
+  .pause-overlay button {
+    padding: 15px 40px; border-radius: 16px; border: none; cursor: pointer;
+    background: linear-gradient(135deg, #22d3ee, #a855f7);
+    color: #0a0620; font-weight: bold; font-family: inherit; font-size: 16px;
+  }
+
+  /* تحدي عكسي - عرض سريع */
+  .flash-question {
+    animation: flashQ 0.3s;
+  }
+  @keyframes flashQ {
+    0% { opacity: 0; transform: scale(0.9); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+</style>
+</head>
+<body class="theme-royal">
+
+<button class="sound-toggle" id="soundToggle" title="تشغيل/إيقاف الصوت">🔊</button>
+<button class="pause-toggle" id="pauseToggle" title="إيقاف مؤقت">⏸️</button>
+<button class="theme-toggle" id="themeToggle" title="تغيير الثيم">🎨</button>
+
+<div class="container">
+
+  <!-- شاشة البداية -->
+  <div id="startScreen" class="screen active">
+    <h1>✨ نور العقل ✨</h1>
+    <p class="subtitle">النسخة الأسطورية النهائية • +3500 سؤال متنوع</p>
+
+    <div class="player-input-wrap">
+      <label>👤 اسم اللاعب</label>
+      <input type="text" id="playerName" placeholder="اكتب اسمك..." maxlength="15">
+    </div>
+
+    <div class="player-xp" id="playerXPBar">
+      <span class="name" id="xpName">لاعب</span>
+      <div class="xp-bar"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+      <span class="coins">💰 <span id="coinsDisplay">0</span></span>
+    </div>
+
+    <div id="dailyChallengeBanner" style="display:none;">
+      <div class="daily-banner">🎁 تحدي اليوم متاح! العب الآن لجمع المكافآت</div>
+    </div>
+
+    <div class="cat-title">🎯 اختر الفئة</div>
+    <div class="category-buttons">
+      <button class="cat-btn religious" onclick="selectCategory('religious')">
+        <span class="icon">🕌</span>
+        <span>أسئلة إسلامية</span>
+        <span style="font-size:11px; opacity:0.8;">قرآن • سيرة • فقه • أنبياء • صحابة</span>
+      </button>
+      <button class="cat-btn scientific" onclick="selectCategory('scientific')">
+        <span class="icon">🔬</span>
+        <span>أسئلة علمية</span>
+        <span style="font-size:11px; opacity:0.8;">جغرافيا • تاريخ • رياضيات • علوم</span>
+      </button>
+    </div>
+
+    <div class="diff-section">
+      <div class="cat-title">⚙️ اختر الصعوبة</div>
+      <div class="diff-buttons">
+        <button class="diff-btn active" onclick="selectDiff('easy', this)">😊 سهل</button>
+        <button class="diff-btn" onclick="selectDiff('medium', this)">🔥 متوسط</button>
+        <button class="diff-btn" onclick="selectDiff('hard', this)">💀 صعب</button>
+        <button class="diff-btn" onclick="selectDiff('expert', this)">🧠 خبير</button>
+        <button class="diff-btn" onclick="selectDiff('legend', this)">👑 أسطوري</button>
+      </div>
+    </div>
+
+    <div class="chars-grid">
+      <div class="char-card selected" data-char="wise" onclick="selectChar('wise', this)">
+        <div class="icon">🧙</div>
+        <div class="name">الحكيم</div>
+        <div class="bonus">+20% نقاط</div>
+      </div>
+      <div class="char-card" data-char="warrior" onclick="selectChar('warrior', this)">
+        <div class="icon">⚔️</div>
+        <div class="name">المحارب</div>
+        <div class="bonus">+5 ثواني</div>
+      </div>
+      <div class="char-card" data-char="explorer" onclick="selectChar('explorer', this)">
+        <div class="icon">🧭</div>
+        <div class="name">المستكشف</div>
+        <div class="bonus">+2 مساعدة</div>
+      </div>
+    </div>
+
+    <div class="side-buttons">
+      <button class="mini-btn" onclick="openStats()">📊 إحصائياتي</button>
+      <button class="mini-btn" onclick="openBadges()">🏅 شاراتي</button>
+      <button class="mini-btn" onclick="openShop()">🛒 المتجر</button>
+      <button class="mini-btn" onclick="openDaily()">🎁 التحدي اليومي</button>
+      <button class="mini-btn" onclick="openReview()">📚 مراجعة الأخطاء</button>
+    </div>
+
+    <div class="leaderboard">
+      <h3>🏆 أفضل النتائج</h3>
+      <div id="leaderboardContent"></div>
+    </div>
+  </div>
+
+  <!-- شاشة اللعب -->
+  <div id="gameScreen" class="screen">
+    <div class="top-bar">
+      <div class="stat-box">📖 <span id="qNum">1</span></div>
+      <div class="stat-box">⭐ <span id="score">0</span></div>
+      <div class="stat-box">🏅 <span id="level">1</span></div>
+      <div class="stat-box streak-box" id="streakBox">🔥 <span id="streak">0</span></div>
+      <div class="stat-box surprise-box" id="surpriseBox" style="display:none;">🎪 ×5</div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+
+    <div class="timer-container">
+      <svg class="timer-svg" viewBox="0 0 90 90">
+        <defs>
+          <linearGradient id="timerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#22d3ee"/>
+            <stop offset="33%" stop-color="#a855f7"/>
+            <stop offset="66%" stop-color="#f472b6"/>
+            <stop offset="100%" stop-color="#fbbf24"/>
+          </linearGradient>
+        </defs>
+        <circle class="timer-bg" cx="45" cy="45" r="40"/>
+        <circle class="timer-fg" id="timerCircle" cx="45" cy="45" r="40"
+          stroke-dasharray="251.2" stroke-dashoffset="0"/>
+      </svg>
+      <div class="timer-text" id="timerText">25</div>
+    </div>
+
+    <div class="question-box" id="questionText"></div>
+    <div class="answers" id="answersBox"></div>
+    <div class="feedback" id="feedback"></div>
+    <div class="action-row">
+      <button class="help-btn" id="helpBtn" onclick="useHelp()">💡 50:50 <span id="helpCount">3</span></button>
+      <button class="help-btn" id="timeBtn" onclick="useTimeHelp()" style="background:linear-gradient(135deg,#22d3ee,#a855f7);color:#fff;">⏱️ +10 ثوانٍ <span id="timeCount">1</span></button>
+      <button class="next-btn" id="nextBtn" onclick="nextQuestion()" style="display:none;">السؤال التالي ➡️</button>
+    </div>
+  </div>
+
+  <!-- شاشة النتيجة -->
+  <div id="resultScreen" class="screen">
+    <h1>🎉 انتهت الجولة 🎉</h1>
+    <div class="result-score" id="finalScore">0</div>
+    <div class="result-msg" id="resultMsg"></div>
+    <div class="badges" id="badgesBox"></div>
+    <div class="action-row">
+      <button class="restart-btn" onclick="backToStart()">🔄 العب مرة أخرى</button>
+      <button class="mini-btn" onclick="shareResult()">📤 شارك النتيجة</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- نافذة منبثقة -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<!-- Pause Overlay -->
+<div class="pause-overlay" id="pauseOverlay">
+  <h2>⏸️ اللعبة موقوفة</h2>
+  <button onclick="resumeGame()">▶️ استئناف</button>
+  <button onclick="backToStart()" style="background:linear-gradient(135deg,#ef4444,#f97316);color:#fff;">🚪 خروج</button>
+</div>
+<script>
+/* ============================================================
+   الجزء 2: كل بنوك الأسئلة + المنطق الكامل
+   ============================================================ */
+
+/* -------- بنوك الأسئلة الدينية -------- */
+const religiousBase = [
+  {q:"كم عدد أركان الإسلام؟", a:["ثلاثة","خمسة","سبعة","أربعة"], c:1},
+  {q:"كم عدد أركان الإيمان؟", a:["خمسة","ستة","سبعة","أربعة"], c:1},
+  {q:"ما هو أول أركان الإسلام؟", a:["الصلاة","الزكاة","الشهادتان","الصوم"], c:2},
+  {q:"كم عدد الصلوات المفروضة في اليوم؟", a:["ثلاث","أربع","خمس","ست"], c:2},
+  {q:"في أي شهر يصوم المسلمون؟", a:["شعبان","رمضان","رجب","محرم"], c:1},
+  {q:"كم عدد أجزاء القرآن الكريم؟", a:["20","25","30","40"], c:2},
+  {q:"ما هي أول سورة في القرآن؟", a:["البقرة","الفاتحة","الناس","الإخلاص"], c:1},
+  {q:"ما هي آخر سورة في القرآن؟", a:["الفلق","الناس","الإخلاص","المسد"], c:1},
+  {q:"ما هي أطول سورة في القرآن؟", a:["آل عمران","النساء","البقرة","المائدة"], c:2},
+  {q:"ما هي أقصر سورة في القرآن؟", a:["الإخلاص","الكوثر","الناس","الفلق"], c:1},
+  {q:"في أي مدينة وُلد النبي محمد ﷺ؟", a:["المدينة","مكة","الطائف","جدة"], c:1},
+  {q:"في أي مدينة توفي النبي ﷺ؟", a:["مكة","المدينة","الطائف","القدس"], c:1},
+  {q:"ما اسم أم النبي ﷺ؟", a:["حليمة","آمنة","فاطمة","خديجة"], c:1},
+  {q:"ما اسم أبي النبي ﷺ؟", a:["أبو طالب","عبد الله","عبد المطلب","العباس"], c:1},
+  {q:"كم كان عمر النبي ﷺ عند البعثة؟", a:["30","35","40","45"], c:2},
+  {q:"ما اسم أول زوجات النبي ﷺ؟", a:["عائشة","خديجة","حفصة","سودة"], c:1},
+  {q:"كم عدد سور القرآن الكريم؟", a:["100","110","114","120"], c:2},
+  {q:"ما هي القبلة الأولى للمسلمين؟", a:["الكعبة","المسجد الأقصى","المسجد النبوي","مسجد قباء"], c:1},
+  {q:"ما هو الركن الخامس من أركان الإسلام؟", a:["الصلاة","الزكاة","الصوم","الحج"], c:3},
+  {q:"ما اسم الملك الموكل بالوحي؟", a:["ميكائيل","جبريل","إسرافيل","مالك"], c:1},
+  {q:"ما اسم الملك الموكل بالمطر؟", a:["جبريل","ميكائيل","إسرافيل","رضوان"], c:1},
+  {q:"ما اسم الملك الموكل بالنفخ في الصور؟", a:["جبريل","ميكائيل","إسرافيل","مالك"], c:2},
+  {q:"كم عدد الأنبياء المذكورين في القرآن؟", a:["20","25","30","35"], c:1},
+  {q:"من هو أبو الأنبياء؟", a:["نوح","إبراهيم","موسى","آدم"], c:1},
+  {q:"من هو النبي الذي كلمه الله؟", a:["عيسى","موسى","إبراهيم","نوح"], c:1},
+  {q:"من هو النبي الذي بقي في بطن الحوت؟", a:["يونس","يوسف","أيوب","صالح"], c:0},
+  {q:"من هو النبي الذي ابتلاه الله بالمرض؟", a:["يعقوب","أيوب","زكريا","يحيى"], c:1},
+  {q:"ما هي أول سورة نزلت في القرآن؟", a:["الفاتحة","العلق","المدثر","البقرة"], c:1},
+  {q:"في أي غار نزل الوحي على النبي ﷺ؟", a:["غار ثور","غار حراء","غار الكهف","غار عرفة"], c:1},
+  {q:"كم عدد ركعات صلاة الفجر؟", a:["ركعتان","ثلاث","أربع","خمس"], c:0},
+  {q:"كم عدد ركعات صلاة المغرب؟", a:["ركعتان","ثلاث","أربع","خمس"], c:1},
+  {q:"كم عدد ركعات صلاة العشاء؟", a:["ركعتان","ثلاث","أربع","خمس"], c:2},
+  {q:"ما هو الشهر الذي يسبق رمضان؟", a:["رجب","شعبان","محرم","شوال"], c:1},
+  {q:"ما هو الشهر الذي يلي رمضان؟", a:["شعبان","شوال","ذو القعدة","ذو الحجة"], c:1},
+  {q:"في أي شهر يؤدي المسلمون الحج؟", a:["رمضان","شوال","ذو الحجة","محرم"], c:2},
+  {q:"كم عدد أشهر الحرم؟", a:["2","3","4","5"], c:2},
+  {q:"ما هي أول غزوة في الإسلام؟", a:["بدر","أحد","الخندق","خيبر"], c:0},
+  {q:"ما اسم غزوة الأحزاب؟", a:["بدر","أحد","الخندق","حنين"], c:2},
+  {q:"كم كان عدد المسلمين في غزوة بدر؟", a:["300","313","500","1000"], c:1},
+  {q:"ما الكتاب الذي أُنزل على موسى؟", a:["الإنجيل","التوراة","الزبور","القرآن"], c:1},
+  {q:"ما الكتاب الذي أُنزل على عيسى؟", a:["التوراة","الإنجيل","الزبور","الصحف"], c:1},
+  {q:"ما الكتاب الذي أُنزل على داود؟", a:["التوراة","الإنجيل","الزبور","القرآن"], c:2},
+  {q:"من هو أول الخلفاء الراشدين؟", a:["عمر","أبو بكر","عثمان","علي"], c:1},
+  {q:"من هو ثاني الخلفاء الراشدين؟", a:["أبو بكر","عمر","عثمان","علي"], c:1},
+  {q:"من هو ثالث الخلفاء الراشدين؟", a:["عمر","عثمان","علي","معاوية"], c:1},
+  {q:"من هو رابع الخلفاء الراشدين؟", a:["عثمان","علي","معاوية","الحسن"], c:1},
+  {q:"من الملقب بـ'الفاروق'؟", a:["أبو بكر","عمر","عثمان","علي"], c:1},
+  {q:"من الملقب بـ'الصديق'؟", a:["عمر","أبو بكر","عثمان","علي"], c:1},
+  {q:"من الملقب بـ'ذو النورين'؟", a:["أبو بكر","عمر","عثمان","علي"], c:2},
+  {q:"من هو سيف الله المسلول؟", a:["خالد بن الوليد","سعد بن أبي وقاص","أبو عبيدة","عمرو بن العاص"], c:0},
+  {q:"من صاحب المذهب الحنفي؟", a:["الشافعي","أبو حنيفة","مالك","أحمد بن حنبل"], c:1},
+  {q:"من صاحب المذهب المالكي؟", a:["الشافعي","أبو حنيفة","مالك","أحمد بن حنبل"], c:2},
+  {q:"من صاحب المذهب الشافعي؟", a:["الشافعي","أبو حنيفة","مالك","أحمد بن حنبل"], c:0},
+  {q:"من صاحب المذهب الحنبلي؟", a:["الشافعي","أبو حنيفة","مالك","أحمد بن حنبل"], c:3},
+  {q:"ما هي أعظم آية في القرآن؟", a:["آية الدين","آية الكرسي","آية النور","آية الوضوء"], c:1},
+  {q:"كم عدد السجدات في القرآن؟", a:["13","14","15","16"], c:2},
+  {q:"ما السورة الملقبة بقلب القرآن؟", a:["الفاتحة","يس","الرحمن","الإخلاص"], c:1},
+  {q:"ما السورة الملقبة بعروس القرآن؟", a:["الرحمن","يس","الملك","الكهف"], c:0},
+  {q:"كم عدد آيات سورة الفاتحة؟", a:["5","6","7","8"], c:2},
+  {q:"ما السورة التي تعدل ثلث القرآن؟", a:["الفاتحة","الإخلاص","الكوثر","الناس"], c:1},
+  {q:"ما السورة التي لا تبدأ بالبسملة؟", a:["الفاتحة","التوبة","النمل","الإخلاص"], c:1},
+  {q:"في أي سورة ذُكرت البسملة مرتين؟", a:["البقرة","النمل","الفاتحة","التوبة"], c:1},
+  {q:"كم يوم خلق الله السماوات والأرض؟", a:["5","6","7","8"], c:1},
+  {q:"من أول إنسان خلقه الله؟", a:["نوح","آدم","إبراهيم","إدريس"], c:1},
+  {q:"من أول امرأة خلقت؟", a:["حواء","سارة","مريم","آسية"], c:0},
+  {q:"كم سنة دعا نوح قومه؟", a:["500","850","950","1000"], c:2},
+  {q:"ما معجزة النبي صالح؟", a:["الناقة","العصا","إحياء الموتى","شفاء المرضى"], c:0},
+  {q:"كم عدد أبواب الجنة؟", a:["7","8","9","10"], c:1},
+  {q:"كم عدد أبواب النار؟", a:["7","8","9","10"], c:0},
+  {q:"ما أفضل ليلة في السنة؟", a:["ليلة الجمعة","ليلة القدر","ليلة الإسراء","ليلة النصف من شعبان"], c:1},
+  {q:"في أي شهر ليلة القدر؟", a:["شعبان","رمضان","شوال","رجب"], c:1},
+  {q:"كم نصاب زكاة الذهب؟", a:["85 غرام","100 غرام","50 غرام","200 غرام"], c:0},
+  {q:"أول ما يُحاسب عليه العبد؟", a:["الصلاة","الزكاة","الصوم","الحج"], c:0},
+  {q:"من الملقب بـ'خليل الله'؟", a:["موسى","إبراهيم","عيسى","نوح"], c:1},
+  {q:"من الملقب بـ'كليم الله'؟", a:["موسى","إبراهيم","عيسى","آدم"], c:0},
+  {q:"من الملقب بـ'روح الله'؟", a:["موسى","إبراهيم","عيسى","يوسف"], c:2},
+  {q:"من النبي الذي أُلقي في النار ولم تحرقه؟", a:["إبراهيم","موسى","يونس","يوسف"], c:0},
+  {q:"من النبي الذي رأى 11 كوكبًا في المنام؟", a:["يعقوب","يوسف","إبراهيم","موسى"], c:1},
+  {q:"ما اسم والد يوسف؟", a:["إسحاق","يعقوب","إبراهيم","إسماعيل"], c:1},
+  {q:"من النبي الذي يشفي الأكمه والأبرص؟", a:["موسى","عيسى","يوسف","داود"], c:1},
+  {q:"من النبي الذي سُخرت له الجبال والطير؟", a:["سليمان","داود","يوسف","موسى"], c:0},
+  {q:"كم عدد أولي العزم من الرسل؟", a:["3","4","5","6"], c:2},
+  {q:"ما الغار الذي اختبأ فيه النبي وأبو بكر؟", a:["غار حراء","غار ثور","غار الكهف","غار عرفة"], c:1},
+  {q:"في أي سنة هجرية فُتحت مكة؟", a:["6هـ","7هـ","8هـ","9هـ"], c:2},
+  {q:"من النبي الذي عاش أطول عمر؟", a:["آدم","نوح","إبراهيم","موسى"], c:1}
+];
+
+const prophetsData = [
+  {name:"آدم", desc:"أول إنسان خلقه الله"},
+  {name:"نوح", desc:"دعا قومه 950 سنة وبنى السفينة"},
+  {name:"إبراهيم", desc:"خليل الله وأبو الأنبياء"},
+  {name:"موسى", desc:"كليم الله وأُلقي في اليم"},
+  {name:"عيسى", desc:"روح الله وكلمة الله"},
+  {name:"محمد ﷺ", desc:"خاتم الأنبياء والمرسلين"},
+  {name:"يوسف", desc:"صاحب الرؤيا وجميل الصورة"},
+  {name:"يونس", desc:"صاحب الحوت"},
+  {name:"أيوب", desc:"الصابر على البلاء"},
+  {name:"داود", desc:"صاحب الزبور والمحراب"},
+  {name:"سليمان", desc:"سُخرت له الجن والريح"},
+  {name:"يعقوب", desc:"إسرائيل والد الأسباط"},
+  {name:"إسماعيل", desc:"الذبيح وابن إبراهيم"},
+  {name:"إسحاق", desc:"بشارة الملائكة لإبراهيم"},
+  {name:"يحيى", desc:"سيد وحصور من الصالحين"},
+  {name:"زكريا", desc:"دعا ربه فوهبه يحيى"},
+  {name:"صالح", desc:"معجزته الناقة"},
+  {name:"هود", desc:"أُرسل إلى قوم عاد"},
+  {name:"لوط", desc:"ابن أخي إبراهيم"},
+  {name:"شعيب", desc:"خطيب الأنبياء"},
+  {name:"إدريس", desc:"رفعه الله مكانًا عليًا"},
+  {name:"ذو الكفل", desc:"من الصابرين"},
+  {name:"إلياس", desc:"دعا قومه لترك الأصنام"},
+  {name:"اليسع", desc:"من الأنبياء المذكورين"},
+  {name:"هارون", desc:"أخو موسى ووزيره"}
+];
+
+const companionsData = [
+  {name:"أبو بكر الصديق", desc:"أول الخليفة الراشد ورفيق النبي في الهجرة"},
+  {name:"عمر بن الخطاب", desc:"الفاروق ثاني الخلفاء"},
+  {name:"عثمان بن عفان", desc:"ذو النورين ثالث الخلفاء"},
+  {name:"علي بن أبي طالب", desc:"رابع الخلفاء وابن عم النبي"},
+  {name:"خالد بن الوليد", desc:"سيف الله المسلول"},
+  {name:"حمزة بن عبد المطلب", desc:"أسد الله وعم النبي"},
+  {name:"أبو عبيدة بن الجراح", desc:"أمين هذه الأمة"},
+  {name:"سعد بن أبي وقاص", desc:"أحد العشرة المبشرين بالجنة وفاتح فارس"},
+  {name:"طلحة بن عبيد الله", desc:"أحد العشرة المبشرين بالجنة"},
+  {name:"الزبير بن العوام", desc:"حواري رسول الله"},
+  {name:"عبد الرحمن بن عوف", desc:"أحد العشرة المبشرين بالجنة"},
+  {name:"أبو ذر الغفاري", desc:"من السابقين للإسلام"},
+  {name:"سلمان الفارسي", desc:"الباحث عن الحق"},
+  {name:"صهيب الرومي", desc:"من السابقين"},
+  {name:"بلال بن رباح", desc:"مؤذن الرسول"},
+  {name:"عمار بن ياسر", desc:"من المعذبين في الله"},
+  {name:"معاذ بن جبل", desc:"أعلم الأمة بالحلال والحرام"},
+  {name:"أبي بن كعب", desc:"سيد القراء"},
+  {name:"زيد بن ثابت", desc:"كاتب الوحي"},
+  {name:"عبد الله بن مسعود", desc:"صاحب سر رسول الله"},
+  {name:"أبو هريرة", desc:"أكثر الصحابة رواية للحديث"},
+  {name:"عبد الله بن عمر", desc:"من أكثر الصحابة عبادة"},
+  {name:"أنس بن مالك", desc:"خدم النبي عشر سنوات"},
+  {name:"عبد الله بن عباس", desc:"ترجمان القرآن"},
+  {name:"عبد الله بن الزبير", desc:"أول مولود في المدينة"}
+];
+
+const allahNamesData = [
+  {name:"الرحمن", meaning:"الذي وسعت رحمته كل شيء"},
+  {name:"الرحيم", meaning:"الذي يرحم المؤمنين"},
+  {name:"الملك", meaning:"المالك المتصرف في ملكه"},
+  {name:"القدوس", meaning:"الطاهر من كل عيب"},
+  {name:"السلام", meaning:"المسلم لعباده من الظلم"},
+  {name:"المؤمن", meaning:"المصدق لرسله بالمعجزات"},
+  {name:"العزيز", meaning:"الغالب الذي لا يُغلب"},
+  {name:"الجبار", meaning:"الذي يجبر الكسير"},
+  {name:"المتكبر", meaning:"المتعالي عن صفات الخلق"},
+  {name:"الخالق", meaning:"المبدع للخلق"},
+  {name:"البارئ", meaning:"المُنشئ للخلق"},
+  {name:"المصور", meaning:"الذي صور الخلق"},
+  {name:"الغفار", meaning:"الذي يغفر الذنوب"},
+  {name:"القهار", meaning:"القاهر لخلقه"},
+  {name:"الوهاب", meaning:"الذي يهب بلا مقابل"},
+  {name:"الرزاق", meaning:"الذي يرزق كل مخلوق"},
+  {name:"الفتاح", meaning:"الذي يفتح أبواب الرحمة"},
+  {name:"العليم", meaning:"المحيط علمه بكل شيء"},
+  {name:"الحكيم", meaning:"الذي يضع الأمور في مواضعها"},
+  {name:"السميع", meaning:"الذي يسمع كل شيء"},
+  {name:"البصير", meaning:"الذي يرى كل شيء"},
+  {name:"اللطيف", meaning:"البَر بعباده"},
+  {name:"الخبير", meaning:"العالم بحقائق الأمور"},
+  {name:"الحليم", meaning:"الذي لا يعجل بالعقوبة"},
+  {name:"العظيم", meaning:"ذو العظمة في ذاته وصفاته"},
+  {name:"الغفور", meaning:"كثير المغفرة"},
+  {name:"الشكور", meaning:"الذي يجزي بالقليل الكثير"},
+  {name:"العلي", meaning:"المتعالي بذاته وقدره"},
+  {name:"الكبير", meaning:"الكبير في ذاته وصفاته"},
+  {name:"الحفيظ", meaning:"الذي يحفظ كل شيء"}
+];
+
+const holyBooksData = [
+  {name:"القرآن الكريم", prophet:"محمد ﷺ"},
+  {name:"التوراة", prophet:"موسى عليه السلام"},
+  {name:"الإنجيل", prophet:"عيسى عليه السلام"},
+  {name:"الزبور", prophet:"داود عليه السلام"},
+  {name:"صحف إبراهيم", prophet:"إبراهيم عليه السلام"}
+];
+
+/* -------- بنوك علمية -------- */
+const scientificBase = [
+  {q:"ما ناتج 7 × 8؟", a:["54","56","58","64"], c:1},
+  {q:"ما ناتج 15 + 27؟", a:["40","41","42","43"], c:2},
+  {q:"ما ناتج 144 ÷ 12؟", a:["10","11","12","13"], c:2},
+  {q:"كم ضلعًا للمثلث؟", a:["2","3","4","5"], c:1},
+  {q:"ما الجذر التربيعي لـ 169؟", a:["11","12","13","14"], c:2},
+  {q:"ما ناتج 9²؟", a:["72","81","90","99"], c:1},
+  {q:"ما قيمة π تقريباً؟", a:["2.14","3.14","4.14","5.14"], c:1},
+  {q:"كم درجة في زوايا المثلث؟", a:["90","180","270","360"], c:1},
+  {q:"كم درجة في الدائرة الكاملة؟", a:["180","270","360","450"], c:2},
+  {q:"ما أصغر عدد أولي؟", a:["0","1","2","3"], c:2},
+  {q:"ما ناتج 12 × 12؟", a:["124","134","144","154"], c:2},
+  {q:"كم ثانية في الدقيقة؟", a:["50","60","70","80"], c:1},
+  {q:"كم دقيقة في الساعة؟", a:["50","60","70","80"], c:1},
+  {q:"كم ساعة في اليوم؟", a:["20","22","24","26"], c:2},
+  {q:"كم يومًا في السنة الكبيسة؟", a:["364","365","366","367"], c:2},
+  {q:"كم 25% من 200؟", a:["25","50","75","100"], c:1},
+  {q:"وحدة قياس القوة؟", a:["الجول","النيوتن","الواط","الأمبير"], c:1},
+  {q:"وحدة قياس الطاقة؟", a:["النيوتن","الجول","الواط","الفولت"], c:1},
+  {q:"سرعة الضوء تقريباً؟", a:["300,000 كم/ث","150,000 كم/ث","450,000 كم/ث","600,000 كم/ث"], c:0},
+  {q:"العنصر الأكثر وفرة في الكون؟", a:["الأكسجين","الهيدروجين","الكربون","النيتروجين"], c:1},
+  {q:"الغاز الأكثر وفرة في الغلاف الجوي؟", a:["الأكسجين","النيتروجين","ثاني أكسيد الكربون","الهيدروجين"], c:1},
+  {q:"درجة تجمد الماء؟", a:["0°م","10°م","-10°م","100°م"], c:0},
+  {q:"درجة غليان الماء؟", a:["50°م","90°م","100°م","120°م"], c:2},
+  {q:"الرمز الكيميائي للماء؟", a:["CO2","H2O","O2","NaCl"], c:1},
+  {q:"الرمز الكيميائي للذهب؟", a:["Go","Au","Ag","Gd"], c:1},
+  {q:"الرمز الكيميائي للحديد؟", a:["Ir","Fe","Hd","In"], c:1},
+  {q:"المعدن السائل في حرارة الغرفة؟", a:["الحديد","الزئبق","الرصاص","النحاس"], c:1},
+  {q:"كم عدد ألوان قوس قزح؟", a:["5","6","7","8"], c:2},
+  {q:"كم عظمة في جسم الإنسان البالغ؟", a:["196","206","216","226"], c:1},
+  {q:"أكبر عضو في جسم الإنسان؟", a:["الكبد","الجلد","الدماغ","الرئتان"], c:1},
+  {q:"كم غرفة في القلب؟", a:["2","3","4","5"], c:2},
+  {q:"العضو المسؤول عن تنقية الدم؟", a:["القلب","الكبد","الكلية","الطحال"], c:2},
+  {q:"وحدة بناء الجسم؟", a:["النسيج","الخلية","العضو","الجهاز"], c:1},
+  {q:"عملية صنع الغذاء في النبات؟", a:["التنفس","البناء الضوئي","النتح","الامتصاص"], c:1},
+  {q:"أكبر حيوان في العالم؟", a:["الفيل","الحوت الأزرق","الزرافة","وحيد القرن"], c:1},
+  {q:"أسرع حيوان بري؟", a:["الأسد","الفهد","الحصان","الغزال"], c:1},
+  {q:"كم رجلًا للعنكبوت؟", a:["6","8","10","12"], c:1},
+  {q:"كم رجلًا للحشرة؟", a:["4","6","8","10"], c:1},
+  {q:"كم سنًا للإنسان البالغ؟", a:["28","30","32","34"], c:2},
+  {q:"أقرب كوكب للشمس؟", a:["الزهرة","عطارد","الأرض","المريخ"], c:1},
+  {q:"أكبر كوكب في المجموعة الشمسية؟", a:["زحل","المشتري","أورانوس","نبتون"], c:1},
+  {q:"الكوكب الأحمر؟", a:["الزهرة","المريخ","المشتري","عطارد"], c:1},
+  {q:"كم كوكبًا في المجموعة الشمسية؟", a:["7","8","9","10"], c:1},
+  {q:"اسم مجرتنا؟", a:["أندروميدا","درب التبانة","المجرة الكبرى","السحابة الماجلانية"], c:1},
+  {q:"كم يستغرق ضوء الشمس للوصول للأرض؟", a:["5 دقائق","8 دقائق","12 دقيقة","20 دقيقة"], c:1},
+  {q:"النجم الأقرب للأرض؟", a:["الشعرى","الشمس","النجم القطبي","بروكسيما"], c:1},
+  {q:"بداية الحرب العالمية الأولى؟", a:["1912","1914","1916","1918"], c:1},
+  {q:"نهاية الحرب العالمية الثانية؟", a:["1943","1944","1945","1946"], c:2},
+  {q:"سقوط جدار برلين؟", a:["1987","1988","1989","1990"], c:2},
+  {q:"من اكتشف أمريكا؟", a:["ماجلان","كولومبوس","فاسكو دا غاما","جيمس كوك"], c:1},
+  {q:"من اخترع المصباح؟", a:["نيوتن","أديسون","أينشتاين","تسلا"], c:1},
+  {q:"من اكتشف الجاذبية؟", a:["أينشتاين","نيوتن","غاليليو","كوبرنيكوس"], c:1},
+  {q:"من وضع النسبية؟", a:["نيوتن","أينشتاين","بور","ماكسويل"], c:1},
+  {q:"أول هبوط على القمر؟", a:["1965","1967","1969","1971"], c:2},
+  {q:"أقدم حضارة في العالم؟", a:["المصرية","السومرية","الإغريقية","الرومانية"], c:1},
+  {q:"من بنى الأهرامات؟", a:["الرومان","المصريون القدماء","الإغريق","الفرس"], c:1}
+];
+
+const capitalsData = [
+  {country:"فرنسا", capital:"باريس"},{country:"اليابان", capital:"طوكيو"},
+  {country:"مصر", capital:"القاهرة"},{country:"السعودية", capital:"الرياض"},
+  {country:"الجزائر", capital:"الجزائر"},{country:"المغرب", capital:"الرباط"},
+  {country:"تونس", capital:"تونس"},{country:"ليبيا", capital:"طرابلس"},
+  {country:"الولايات المتحدة", capital:"واشنطن"},{country:"بريطانيا", capital:"لندن"},
+  {country:"إيطاليا", capital:"روما"},{country:"ألمانيا", capital:"برلين"},
+  {country:"إسبانيا", capital:"مدريد"},{country:"الصين", capital:"بكين"},
+  {country:"الهند", capital:"نيودلهي"},{country:"روسيا", capital:"موسكو"},
+  {country:"البرازيل", capital:"برازيليا"},{country:"الأرجنتين", capital:"بوينس آيرس"},
+  {country:"كندا", capital:"أوتاوا"},{country:"أستراليا", capital:"كانبيرا"},
+  {country:"تركيا", capital:"أنقرة"},{country:"إيران", capital:"طهران"},
+  {country:"العراق", capital:"بغداد"},{country:"سوريا", capital:"دمشق"},
+  {country:"لبنان", capital:"بيروت"},{country:"الأردن", capital:"عمان"},
+  {country:"فلسطين", capital:"القدس"},{country:"الكويت", capital:"الكويت"},
+  {country:"قطر", capital:"الدوحة"},{country:"الإمارات", capital:"أبوظبي"},
+  {country:"البحرين", capital:"المنامة"},{country:"عُمان", capital:"مسقط"},
+  {country:"اليمن", capital:"صنعاء"},{country:"السودان", capital:"الخرطوم"},
+  {country:"إثيوبيا", capital:"أديس أبابا"},{country:"كينيا", capital:"نيروبي"},
+  {country:"جنوب أفريقيا", capital:"بريتوريا"},{country:"نيجيريا", capital:"أبوجا"},
+  {country:"غانا", capital:"أكرا"},{country:"إندونيسيا", capital:"جاكرتا"},
+  {country:"ماليزيا", capital:"كوالالمبور"},{country:"باكستان", capital:"إسلام آباد"},
+  {country:"أفغانستان", capital:"كابول"},{country:"اليونان", capital:"أثينا"},
+  {country:"البرتغال", capital:"لشبونة"},{country:"هولندا", capital:"أمستردام"},
+  {country:"بلجيكا", capital:"بروكسل"},{country:"السويد", capital:"ستوكهولم"},
+  {country:"النرويج", capital:"أوسلو"},{country:"الدنمارك", capital:"كوبنهاغن"},
+  {country:"سويسرا", capital:"برن"},{country:"النمسا", capital:"فيينا"},
+  {country:"بولندا", capital:"وارسو"},{country:"المكسيك", capital:"مكسيكو سيتي"},
+  {country:"كوبا", capital:"هافانا"},{country:"تشيلي", capital:"سانتياغو"},
+  {country:"بيرو", capital:"ليما"},{country:"كولومبيا", capital:"بوغوتا"},
+  {country:"فنزويلا", capital:"كاراكاس"},{country:"نيوزيلندا", capital:"ويلينغتون"},
+  {country:"كوريا الجنوبية", capital:"سيول"},{country:"تايلاند", capital:"بانكوك"},
+  {country:"فيتنام", capital:"هانوي"},{country:"الفلبين", capital:"مانيلا"},
+  {country:"منغوليا", capital:"أولان باتور"},{country:"كازاخستان", capital:"أستانا"},
+  {country:"أوكرانيا", capital:"كييف"},{country:"رومانيا", capital:"بوخارست"},
+  {country:"المجر", capital:"بودابست"},{country:"التشيك", capital:"براغ"},
+  {country:"إيرلندا", capital:"دبلن"},{country:"آيسلندا", capital:"ريكيافيك"},
+  {country:"فنلندا", capital:"هلسنكي"},{country:"بلغاريا", capital:"صوفيا"},
+  {country:"كرواتيا", capital:"زغرب"},{country:"صربيا", capital:"بلغراد"},
+  {country:"سلوفاكيا", capital:"براتيسلافا"},{country:"ليتوانيا", capital:"فيلنيوس"},
+  {country:"لاتفيا", capital:"ريغا"},{country:"إستونيا", capital:"تالين"},
+  {country:"بنجلاديش", capital:"دكا"},{country:"سريلانكا", capital:"كولومبو"},
+  {country:"نيبال", capital:"كاتماندو"},{country:"بوتان", capital:"تيمفو"},
+  {country:"المالديف", capital:"ماليه"},{country:"بروناي", capital:"بندر سري بكاوان"},
+  {country:"لاوس", capital:"فيينتيان"},{country:"كمبوديا", capital:"بنوم بنه"},
+  {country:"ميانمار", capital:"نايبيداو"},{country:"أوزبكستان", capital:"طشقند"},
+  {country:"تركمانستان", capital:"عشق آباد"},{country:"قيرغيزستان", capital:"بيشكيك"},
+  {country:"طاجيكستان", capital:"دوشنبه"},{country:"أذربيجان", capital:"باكو"},
+  {country:"أرمينيا", capital:"يريفان"},{country:"جورجيا", capital:"تبليسي"},
+  {country:"البوسنة", capital:"سراييفو"},{country:"مقدونيا", capital:"سكوبيه"},
+  {country:"ألبانيا", capital:"تيرانا"},{country:"مولدوفا", capital:"كيشيناو"},
+  {country:"بيلاروسيا", capital:"مينسك"},{country:"سلوفينيا", capital:"ليوبليانا"},
+  {country:"الجبل الأسود", capital:"بودغوريتسا"},{country:"مالطا", capital:"فاليتا"},
+  {country:"قبرص", capital:"نيقوسيا"},{country:"لوكسمبورغ", capital:"لوكسمبورغ"}
+];
+
+const elementsData = [
+  {name:"الهيدروجين", symbol:"H"},{name:"الهيليوم", symbol:"He"},
+  {name:"الليثيوم", symbol:"Li"},{name:"البيريليوم", symbol:"Be"},
+  {name:"البورون", symbol:"B"},{name:"الكربون", symbol:"C"},
+  {name:"النيتروجين", symbol:"N"},{name:"الأكسجين", symbol:"O"},
+  {name:"الفلور", symbol:"F"},{name:"النيون", symbol:"Ne"},
+  {name:"الصوديوم", symbol:"Na"},{name:"المغنيسيوم", symbol:"Mg"},
+  {name:"الألومنيوم", symbol:"Al"},{name:"السيليكون", symbol:"Si"},
+  {name:"الفوسفور", symbol:"P"},{name:"الكبريت", symbol:"S"},
+  {name:"الكلور", symbol:"Cl"},{name:"الأرجون", symbol:"Ar"},
+  {name:"البوتاسيوم", symbol:"K"},{name:"الكالسيوم", symbol:"Ca"},
+  {name:"الحديد", symbol:"Fe"},{name:"النحاس", symbol:"Cu"},
+  {name:"الزنك", symbol:"Zn"},{name:"الفضة", symbol:"Ag"},
+  {name:"الذهب", symbol:"Au"},{name:"الزئبق", symbol:"Hg"},
+  {name:"الرصاص", symbol:"Pb"},{name:"اليورانيوم", symbol:"U"},
+  {name:"التيتانيوم", symbol:"Ti"},{name:"الكروم", symbol:"Cr"},
+  {name:"المنغنيز", symbol:"Mn"},{name:"الكوبالت", symbol:"Co"},
+  {name:"النيكل", symbol:"Ni"},{name:"القصدير", symbol:"Sn"},
+  {name:"البلاتين", symbol:"Pt"},{name:"اليود", symbol:"I"},
+  {name:"البروم", symbol:"Br"},{name:"الزرنيخ", symbol:"As"},
+  {name:"السيلينيوم", symbol:"Se"},{name:"الباريوم", symbol:"Ba"},
+  {name:"الراديوم", symbol:"Ra"},{name:"الثوريوم", symbol:"Th"},
+  {name:"النيوديميوم", symbol:"Nd"},{name:"السيريوم", symbol:"Ce"},
+  {name:"اللانثانوم", symbol:"La"},{name:"البراسيوديميوم", symbol:"Pr"}
+];
+
+const currenciesData = [
+  {country:"اليابان", currency:"الين"},{country:"بريطانيا", currency:"الجنيه الإسترليني"},
+  {country:"الولايات المتحدة", currency:"الدولار"},{country:"فرنسا", currency:"اليورو"},
+  {country:"السعودية", currency:"الريال"},{country:"مصر", currency:"الجنيه المصري"},
+  {country:"الجزائر", currency:"الدينار الجزائري"},{country:"المغرب", currency:"الدرهم"},
+  {country:"تونس", currency:"الدينار التونسي"},{country:"تركيا", currency:"الليرة التركية"},
+  {country:"الصين", currency:"اليوان"},{country:"روسيا", currency:"الروبل"},
+  {country:"الهند", currency:"الروبية"},{country:"إيران", currency:"الريال الإيراني"},
+  {country:"العراق", currency:"الدينار العراقي"},{country:"الكويت", currency:"الدينار الكويتي"},
+  {country:"قطر", currency:"الريال القطري"},{country:"الإمارات", currency:"الدرهم الإماراتي"},
+  {country:"البحرين", currency:"الدينار البحريني"},{country:"عُمان", currency:"الريال العماني"},
+  {country:"الأردن", currency:"الدينار الأردني"},{country:"لبنان", currency:"الليرة اللبنانية"},
+  {country:"سوريا", currency:"الليرة السورية"},{country:"اليمن", currency:"الريال اليمني"},
+  {country:"السودان", currency:"الجنيه السوداني"},{country:"ليبيا", currency:"الدينار الليبي"},
+  {country:"كندا", currency:"الدولار الكندي"},{country:"أستراليا", currency:"الدولار الأسترالي"},
+  {country:"البرازيل", currency:"الريال البرازيلي"},{country:"المكسيك", currency:"البيزو المكسيكي"},
+  {country:"كوريا الجنوبية", currency:"الوون"},{country:"تايلاند", currency:"البات"},
+  {country:"ماليزيا", currency:"الرينغيت"},{country:"إندونيسيا", currency:"الروبية الإندونيسية"},
+  {country:"باكستان", currency:"الروبية الباكستانية"},{country:"أفغانستان", currency:"الأفغاني"},
+  {country:"السويد", currency:"الكرونة السويدية"},{country:"النرويج", currency:"الكرونة النرويجية"},
+  {country:"الدنمارك", currency:"الكرونة الدنماركية"},{country:"سويسرا", currency:"الفرنك السويسري"},
+  {country:"بولندا", currency:"الزلوتي"},{country:"المجر", currency:"الفورنت"},
+  {country:"التشيك", currency:"الكرونة التشيكية"},{country:"رومانيا", currency:"الليو"},
+  {country:"بلغاريا", currency:"الليف"},{country:"كرواتيا", currency:"الكونا"},
+  {country:"صربيا", currency:"الدينار الصربي"},{country:"أيسلندا", currency:"الكرونة الآيسلندية"},
+  {country:"نيجيريا", currency:"النيرة"},{country:"كينيا", currency:"الشلن الكيني"},
+  {country:"جنوب أفريقيا", currency:"الراند"},{country:"إثيوبيا", currency:"البير"},
+  {country:"غانا", currency:"السيدي"},{country:"المغرب", currency:"الدرهم المغربي"}
+];
+
+const scientistsData = [
+  {name:"نيوتن", field:"الفيزياء والجاذبية"},
+  {name:"أينشتاين", field:"النسبية"},
+  {name:"أديسون", field:"المصباح الكهربائي"},
+  {name:"غراهام بيل", field:"الهاتف"},
+  {name:"ماري كوري", field:"النشاط الإشعاعي"},
+  {name:"داروين", field:"التطور"},
+  {name:"باستور", field:"البسترة واللقاحات"},
+  {name:"فليمنغ", field:"البنسلين"},
+  {name:"غاليليو", field:"الفلك والتلسكوب"},
+  {name:"كوبرنيكوس", field:"مركزية الشمس"},
+  {name:"أرخميدس", field:"الطفو والرافعة"},
+  {name:"فيثاغورس", field:"نظرية المثلث القائم"},
+  {name:"إقليدس", field:"أبو الهندسة"},
+  {name:"الخوارزمي", field:"الجبر والخوارزميات"},
+  {name:"ابن سينا", field:"الطب والقانون في الطب"},
+  {name:"ابن الهيثم", field:"البصريات"},
+  {name:"جابر بن حيان", field:"أبو الكيمياء"},
+  {name:"البيروني", field:"الفلك والجغرافيا"},
+  {name:"الرازي", field:"الطب والكيمياء"},
+  {name:"ابن خلدون", field:"علم الاجتماع"},
+  {name:"تسلا", field:"التيار المتردد"},
+  {name:"ماكسويل", field:"الكهرومغناطيسية"},
+  {name:"بور", field:"النموذج الذري"},
+  {name:"مندليف", field:"الجدول الدوري"},
+  {name:"لافوازييه", field:"أبو الكيمياء الحديثة"},
+  {name:"هوك", field:"الخلية"},
+  {name:"مندل", field:"الوراثة"},
+  {name:"واط", field:"المحرك البخاري"},
+  {name:"ستيفنسون", field:"القاطرة البخارية"},
+  {name:"براذرز رايت", field:"الطائرة"},
+  {name:"فاراداي", field:"الحث الكهرومغناطيسي"},
+  {name:"أمبير", field:"التيار الكهربائي"},
+  {name:"فولتا", field:"البطارية"},
+  {name:"أوم", field:"قانون المقاومة"},
+  {name:"جول", field:"الطاقة الحرارية"},
+  {name:"كلفن", field:"المقياس المطلق"},
+  {name:"هيرتز", field:"الموجات الكهرومغناطيسية"},
+  {name:"رونتجن", field:"الأشعة السينية"},
+  {name:"بيكريل", field:"النشاط الإشعاعي"},
+  {name:"روذرفورد", field:"النموذج النووي"}
+];
+
+const eventsData = [
+  {e:"الحرب العالمية الأولى", y:1914},{e:"الحرب العالمية الثانية بدأت", y:1939},
+  {e:"الحرب العالمية الثانية انتهت", y:1945},{e:"سقوط جدار برلين", y:1989},
+  {e:"هبوط الإنسان على القمر", y:1969},{e:"تأسيس الأمم المتحدة", y:1945},
+  {e:"الثورة الفرنسية", y:1789},{e:"الثورة الأمريكية", y:1776},
+  {e:"اكتشاف أمريكا", y:1492},{e:"فتح القسطنطينية", y:1453},
+  {e:"معركة حطين", y:1187},{e:"معركة عين جالوت", y:1260},
+  {e:"فتح الأندلس", y:711},{e:"سقوط غرناطة", y:1492},
+  {e:"معركة بدر", y:624},{e:"فتح مكة", y:630},
+  {e:"وفاة النبي محمد ﷺ", y:632},{e:"معركة اليرموك", y:636},
+  {e:"معركة القادسية", y:636},{e:"تأسيس الدولة العباسية", y:750},
+  {e:"تأسيس الدولة الأموية", y:661},{e:"سقوط بغداد على يد المغول", y:1258},
+  {e:"الحرب الباردة بدأت", y:1947},{e:"انهيار الاتحاد السوفيتي", y:1991},
+  {e:"اختراع الطائرة", y:1903},{e:"اختراع الهاتف", y:1876},
+  {e:"اختراع المصباح الكهربائي", y:1879},{e:"اكتشاف البنسلين", y:1928},
+  {e:"معركة بلاط الشهداء", y:732},{e:"معركة الزلاقة", y:1086},
+  {e:"حصار فيينا", y:1683},{e:"الحرب العالمية الأولى انتهت", y:1918},
+  {e:"الثورة الروسية", y:1917},{e:"معركة مانزيكرت", y:1071},
+  {e:"سقوط القسطنطينية", y:1453},{e:"ميثاق روما", y:1957},
+  {e:"معاهدة فرساي", y:1919},{e:"الثورة الصناعية", y:1760},
+  {e:"اختراع الطباعة", y:1440},{e:"سقوط برلين", y:1945},
+  {e:"إعلان استقلال أمريكا", y:1776},{e:"توحيد ألمانيا", y:1871},
+  {e:"توحيد إيطاليا", y:1861},{e:"الثورة البلشفية", y:1917}
+];
+
+const continentsData = [
+  {country:"مصر", continent:"أفريقيا"},{country:"السعودية", continent:"آسيا"},
+  {country:"الجزائر", continent:"أفريقيا"},{country:"المغرب", continent:"أفريقيا"},
+  {country:"تونس", continent:"أفريقيا"},{country:"ليبيا", continent:"أفريقيا"},
+  {country:"فرنسا", continent:"أوروبا"},{country:"ألمانيا", continent:"أوروبا"},
+  {country:"إيطاليا", continent:"أوروبا"},{country:"إسبانيا", continent:"أوروبا"},
+  {country:"بريطانيا", continent:"أوروبا"},{country:"الصين", continent:"آسيا"},
+  {country:"اليابان", continent:"آسيا"},{country:"الهند", continent:"آسيا"},
+  {country:"كوريا الجنوبية", continent:"آسيا"},{country:"الولايات المتحدة", continent:"أمريكا الشمالية"},
+  {country:"كندا", continent:"أمريكا الشمالية"},{country:"المكسيك", continent:"أمريكا الشمالية"},
+  {country:"البرازيل", continent:"أمريكا الجنوبية"},{country:"الأرجنتين", continent:"أمريكا الجنوبية"},
+  {country:"تشيلي", continent:"أمريكا الجنوبية"},{country:"أستراليا", continent:"أستراليا"},
+  {country:"نيوزيلندا", continent:"أستراليا"},{country:"روسيا", continent:"أوروبا وآسيا"},
+  {country:"تركيا", continent:"آسيا وأوروبا"},{country:"إيران", continent:"آسيا"},
+  {country:"العراق", continent:"آسيا"},{country:"سوريا", continent:"آسيا"},
+  {country:"الأردن", continent:"آسيا"},{country:"لبنان", continent:"آسيا"},
+  {country:"اليمن", continent:"آسيا"},{country:"عُمان", continent:"آسيا"},
+  {country:"الكويت", continent:"آسيا"},{country:"قطر", continent:"آسيا"},
+  {country:"الإمارات", continent:"آسيا"},{country:"البحرين", continent:"آسيا"},
+  {country:"السودان", continent:"أفريقيا"},{country:"إثيوبيا", continent:"أفريقيا"},
+  {country:"كينيا", continent:"أفريقيا"},{country:"نيجيريا", continent:"أفريقيا"},
+  {country:"جنوب أفريقيا", continent:"أفريقيا"},{country:"غانا", continent:"أفريقيا"},
+  {country:"إندونيسيا", continent:"آسيا"},{country:"ماليزيا", continent:"آسيا"},
+  {country:"باكستان", continent:"آسيا"},{country:"أفغانستان", continent:"آسيا"},
+  {country:"اليونان", continent:"أوروبا"},{country:"البرتغال", continent:"أوروبا"},
+  {country:"هولندا", continent:"أوروبا"},{country:"بلجيكا", continent:"أوروبا"},
+  {country:"السويد", continent:"أوروبا"},{country:"النرويج", continent:"أوروبا"},
+  {country:"الدنمارك", continent:"أوروبا"},{country:"سويسرا", continent:"أوروبا"},
+  {country:"النمسا", continent:"أوروبا"},{country:"بولندا", continent:"أوروبا"},
+  {country:"أوكرانيا", continent:"أوروبا"},{country:"رومانيا", continent:"أوروبا"},
+  {country:"المجر", continent:"أوروبا"},{country:"التشيك", continent:"أوروبا"},
+  {country:"إيرلندا", continent:"أوروبا"},{country:"فنلندا", continent:"أوروبا"},
+  {country:"آيسلندا", continent:"أوروبا"}
+];
+
+const animalsData = [
+  {name:"الأسد", fact:"ملك الغابة"},
+  {name:"النمر", fact:"أسرع من الفهد في المسافات القصيرة"},
+  {name:"الفيل", fact:"أكبر حيوان بري"},
+  {name:"الزرافة", fact:"أطول رقبة"},
+  {name:"الحوت الأزرق", fact:"أكبر حيوان على الأرض"},
+  {name:"الفهد", fact:"أسرع حيوان بري"},
+  {name:"النعامة", fact:"أكبر طائر"},
+  {name:"الطاووس", fact:"أجمل ريش"},
+  {name:"البطريق", fact:"يعيش في القطب الجنوبي"},
+  {name:"الدب القطبي", fact:"يعيش في القطب الشمالي"},
+  {name:"الجمل", fact:"سفينة الصحراء"},
+  {name:"الحصان", fact:"ينام واقفًا"},
+  {name:"القرد", fact:"أقرب حيوان للإنسان"},
+  {name:"الدلفين", fact:"أذكى حيوان بحري"},
+  {name:"التمساح", fact:"من أقدم الزواحف"},
+  {name:"الأفعى", fact:"تتخلص من جلدها"},
+  {name:"النسر", fact:"يرى مسافات بعيدة"},
+  {name:"البومة", fact:"ترى في الظلام"},
+  {name:"الخفاش", fact:"الثديي الوحيد الطائر"},
+  {name:"الأرنب", fact:"أذنان طويلتان"},
+  {name:"الكنغر", fact:"يحمل صغاره في جيب"},
+  {name:"الحمار الوحشي", fact:"جلده مخطط"},
+  {name:"القرش", fact:"أشرس حيوان بحري"},
+  {name:"الأخطبوط", fact:"له 8 أرجل"},
+  {name:"السلحفاة", fact:"تعيش طويلاً"},
+  {name:"الضفدع", fact:"يعيش في الماء والبر"},
+  {name:"النحلة", fact:"تنتج العسل"},
+  {name:"النملة", fact:"يستطيع حمل 50 ضعف وزنه"},
+  {name:"العنكبوت", fact:"له 8 أرجل"},
+  {name:"الفراشة", fact:"تتحول من شرنقة"},
+  {name:"الغراب", fact:"أذكى الطيور"},
+  {name:"الحمامة", fact:"ترمز للسلام"},
+  {name:"الببغاء", fact:"يقلد كلام الإنسان"},
+  {name:"الطاووس", fact:"يفتح ريشه للاستعراض"},
+  {name:"النحلة الملكة", fact:"تقود الخلية"},
+  {name:"الضبع", fact:"يأكل الجيف"},
+  {name:"ابن آوى", fact:"حيوان ليلي"},
+  {name:"الغزال", fact:"سريع ورَشيق"},
+  {name:"الحرباء", fact:"تغير لونها"},
+  {name:"السحلية", fact:"تتخلص من ذيلها"}
+];
+
+const colorsData = [
+  {color:"الأحمر", hex:"#FF0000"},
+  {color:"الأزرق", hex:"#0000FF"},
+  {color:"الأخضر", hex:"#00FF00"},
+  {color:"الأصفر", hex:"#FFFF00"},
+  {color:"الأسود", hex:"#000000"},
+  {color:"الأبيض", hex:"#FFFFFF"},
+  {color:"البرتقالي", hex:"#FFA500"},
+  {color:"البنفسجي", hex:"#800080"},
+  {color:"الوردي", hex:"#FFC0CB"},
+  {color:"البني", hex:"#A52A2A"},
+  {color:"الرمادي", hex:"#808080"},
+  {color:"السماوي", hex:"#87CEEB"},
+  {color:"الذهبي", hex:"#FFD700"},
+  {color:"الفضي", hex:"#C0C0C0"},
+  {color:"التركوازي", hex:"#40E0D0"},
+  {color:"الليموني", hex:"#FFF44F"},
+  {color:"الكحلي", hex:"#000080"},
+  {color:"الزيتوني", hex:"#808000"},
+  {color:"الخمري", hex:"#800000"},
+  {color:"الفيروزي", hex:"#30D5C8"}
+];
+
+const plantsData = [
+  {name:"النخلة", fact:"شجرة مباركة ورد ذكرها في القرآن"},
+  {name:"الزيتون", fact:"شجرة مباركة ورد ذكرها في القرآن"},
+  {name:"التين", fact:"سورة في القرآن سُميت باسمه"},
+  {name:"العنب", fact:"يُصنع منه الزبيب"},
+  {name:"البرتقال", fact:"غني بفيتامين C"},
+  {name:"الليمون", fact:"حامضي وغني بفيتامين C"},
+  {name:"التفاح", fact:"فاكهة الجنة"},
+  {name:"الرمان", fact:"ورد ذكره في القرآن"},
+  {name:"الموز", fact:"فاكهة استوائية"},
+  {name:"المانجو", fact:"ملك الفواكه"},
+  {name:"البطيخ", fact:"فاكهة صيفية"},
+  {name:"الفراولة", fact:"فاكهة حمراء"},
+  {name:"الأرز", fact:"غذاء رئيسي في آسيا"},
+  {name:"القمح", fact:"يُصنع منه الخبز"},
+  {name:"الشعير", fact:"يُستخدم في صناعة الجعة"},
+  {name:"الذرة", fact:"من أهم المحاصيل"},
+  {name:"القطن", fact:"يُصنع منه القماش"},
+  {name:"الورد", fact:"ملك الأزهار"},
+  {name:"الياسمين", fact:"زهرة عطرية"},
+  {name:"اللافندر", fact:"له رائحة مهدئة"},
+  {name:"الصبار", fact:"يعيش في الصحراء"},
+  {name:"السرخس", fact:"نبات قديم"},
+  {name:"البامبو", fact:"أسرع نبات نموًا"},
+  {name:"الصنوبر", fact:"شجرة دائمة الخضرة"},
+  {name:"البلوط", fact:"شجرة معمرة"}
+];
+
+const bodiesData = [
+  {name:"القلب", fact:"يضخ الدم في الجسم"},
+  {name:"الدماغ", fact:"مركز التفكير"},
+  {name:"الكبد", fact:"أكبر غدة في الجسم"},
+  {name:"الرئة", fact:"مسؤولة عن التنفس"},
+  {name:"الكلية", fact:"تُنقي الدم"},
+  {name:"المعدة", fact:"تهضم الطعام"},
+  {name:"الأمعاء", fact:"تمتص الغذاء"},
+  {name:"الجلد", fact:"أكبر عضو"},
+  {name:"العين", fact:"عضو البصر"},
+  {name:"الأذن", fact:"عضو السمع"},
+  {name:"الأنف", fact:"عضو الشم"},
+  {name:"اللسان", fact:"عضو التذوق"},
+  {name:"العضلات", fact:"تحرك الجسم"},
+  {name:"العظام", fact:"تدعم الجسم"},
+  {name:"الأسنان", fact:"تقطيع الطعام"}
+];
+
+/* -------- مولّدات ذكية -------- */
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function genGeneric(items, qFn, keyFn) {
+  const out = [];
+  items.forEach((item, idx) => {
+    const correct = keyFn(item);
+    const others = items.filter((_, i) => i !== idx).map(keyFn);
+    const wrongs = shuffle(others).slice(0, 3);
+    const options = shuffle([...wrongs, correct]);
+    out.push({ q: qFn(item), a: options, c: options.indexOf(correct) });
+  });
+  return out;
+}
+
+function genCapitals() {
+  return genGeneric(capitalsData, i => `ما هي عاصمة ${i.country}؟`, i => i.capital)
+    .concat(genGeneric(capitalsData, i => `${i.capital} هي عاصمة أي دولة؟`, i => i.country));
+}
+function genElements() {
+  return genGeneric(elementsData, i => `ما هو الرمز الكيميائي لعنصر ${i.name}؟`, i => i.symbol)
+    .concat(genGeneric(elementsData, i => `الرمز "${i.symbol}" يدل على عنصر:`, i => i.name));
+}
+function genCurrencies() {
+  return genGeneric(currenciesData, i => `ما هي العملة الرسمية في ${i.country}؟`, i => i.currency)
+    .concat(genGeneric(currenciesData, i => `${i.currency} هي العملة الرسمية في:`, i => i.country));
+}
+function genScientists() {
+  return genGeneric(scientistsData, i => `بماذا يشتهر ${i.name}؟`, i => i.field)
+    .concat(genGeneric(scientistsData, i => `من المشهور بـ"${i.field}"؟`, i => i.name));
+}
+function genProphets() {
+  return genGeneric(prophetsData, i => `من النبي الذي ${i.desc}؟`, i => i.name);
+}
+function genCompanions() {
+  return genGeneric(companionsData, i => `من الصحابي الذي ${i.desc}؟`, i => i.name);
+}
+function genAllahNames() {
+  return genGeneric(allahNamesData, i => `ما معنى اسم الله "${i.name}"؟`, i => i.meaning);
+}
+function genHolyBooks() {
+  return genGeneric(holyBooksData, i => `على أي نبي أُنزل ${i.name}؟`, i => i.prophet);
+}
+function genContinents() {
+  return genGeneric(continentsData, i => `في أي قارة تقع ${i.country}؟`, i => i.continent);
+}
+function genAnimals() {
+  return genGeneric(animalsData, i => `ما هو الحيوان الذي: ${i.fact}؟`, i => i.name);
+}
+function genColors() {
+  return genGeneric(colorsData, i => `ما كود لون ${i.color}؟`, i => i.hex);
+}
+function genPlants() {
+  return genGeneric(plantsData, i => `ما هو النبات الذي: ${i.fact}؟`, i => i.name);
+}
+function genBodies() {
+  return genGeneric(bodiesData, i => `ما هو العضو الذي: ${i.fact}؟`, i => i.name);
+}
+function genHistory() {
+  return genGeneric(eventsData, i => `في أي عام: ${i.e}؟`, i => String(i.y));
+}
+function genMath(count = 800) {
+  const out = [];
+  const ops = ['+', '-', '×', '÷'];
+  for (let i = 0; i < count; i++) {
+    const op = ops[Math.floor(Math.random() * ops.length)];
+    let a, b, r;
+    if (op === '+') { a = Math.floor(Math.random()*100)+1; b = Math.floor(Math.random()*100)+1; r = a+b; }
+    else if (op === '-') { a = Math.floor(Math.random()*100)+20; b = Math.floor(Math.random()*20)+1; r = a-b; }
+    else if (op === '×') { a = Math.floor(Math.random()*12)+2; b = Math.floor(Math.random()*12)+2; r = a*b; }
+    else { b = Math.floor(Math.random()*12)+2; r = Math.floor(Math.random()*12)+2; a = b*r; }
+    const wrongs = new Set();
+    while (wrongs.size < 3) {
+      const o = Math.floor(Math.random()*10)-5;
+      const w = r + (o === 0 ? 1 : o);
+      if (w !== r && w > 0) wrongs.add(w);
+    }
+    const options = shuffle([...wrongs, r]);
+    out.push({ q: `ما ناتج ${a} ${op} ${b}؟`, a: options.map(String), c: options.indexOf(r) });
+  }
+  return out;
+}
+
+function getAllReligious() {
+  return [...religiousBase, ...genProphets(), ...genCompanions(), ...genAllahNames(), ...genHolyBooks()];
+}
+function getAllScientific() {
+  return [...scientificBase, ...genCapitals(), ...genElements(), ...genCurrencies(),
+          ...genScientists(), ...genContinents(), ...genAnimals(), ...genColors(),
+          ...genPlants(), ...genBodies(), ...genMath(800), ...genHistory()];
+}
+
+/* -------- الصوت -------- */
+let audioCtx = null, musicPlaying = false, musicTimeout = null, soundEnabled = true;
+let currentMusicType = 'religious';
+
+function initAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+}
+function startMusic(type = 'religious') {
+  if (!soundEnabled) return;
+  stopMusic();
+  initAudio();
+  musicPlaying = true;
+  currentMusicType = type;
+  const religiousNotes = [261.63, 293.66, 311.13, 349.23, 392.00, 415.30, 466.16, 523.25,
+                          466.16, 415.30, 392.00, 349.23, 311.13, 293.66, 261.63, 233.08];
+  const scientificNotes = [261.63, 329.63, 392.00, 523.25, 440.00, 392.00, 329.63, 261.63,
+                           293.66, 349.23, 440.00, 587.33, 523.25, 440.00, 392.00, 293.66];
+  const notes = type === 'religious' ? religiousNotes : scientificNotes;
+  let index = 0;
+  function playNote() {
+    if (!musicPlaying || !soundEnabled) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type === 'religious' ? 'sine' : 'triangle';
+    osc.frequency.value = notes[index];
+    gain.gain.setValueAtTime(0, audioCtx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.028, audioCtx.currentTime + 0.4);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 2.2);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(); osc.stop(audioCtx.currentTime + 2.2);
+    index = (index + 1) % notes.length;
+    musicTimeout = setTimeout(playNote, 1500);
+  }
+  playNote();
+}
+function stopMusic() {
+  musicPlaying = false;
+  if (musicTimeout) clearTimeout(musicTimeout);
+}
+function playCorrect() {
+  if (!soundEnabled) return; initAudio();
+  [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => {
+    const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+    osc.type = 'sine'; osc.frequency.value = f;
+    const t = audioCtx.currentTime + i * 0.1;
+    gain.gain.setValueAtTime(0, t);
+    gain.gain.linearRampToValueAtTime(0.15, t + 0.05);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(t); osc.stop(t + 0.5);
+  });
+}
+function playWrong() {
+  if (!soundEnabled) return; initAudio();
+  const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(110, audioCtx.currentTime + 0.3);
+  gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+  osc.connect(gain); gain.connect(audioCtx.destination);
+  osc.start(); osc.stop(audioCtx.currentTime + 0.4);
+}
+function playTick() {
+  if (!soundEnabled) return; initAudio();
+  const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+  osc.type = 'sine'; osc.frequency.value = 880;
+  gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+  osc.connect(gain); gain.connect(audioCtx.destination);
+  osc.start(); osc.stop(audioCtx.currentTime + 0.08);
+}
+function playFinish() {
+  if (!soundEnabled) return; initAudio();
+  [523.25, 587.33, 659.25, 783.99, 1046.50, 1318.51].forEach((f, i) => {
+    const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+    osc.type = 'sine'; osc.frequency.value = f;
+    const t = audioCtx.currentTime + i * 0.15;
+    gain.gain.setValueAtTime(0, t);
+    gain.gain.linearRampToValueAtTime(0.15, t + 0.05);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.6);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(t); osc.stop(t + 0.6);
+  });
+}
+function playStreak() {
+  if (!soundEnabled) return; initAudio();
+  [659.25, 783.99, 987.77, 1174.66].forEach((f, i) => {
+    const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+    osc.type = 'triangle'; osc.frequency.value = f;
+    const t = audioCtx.currentTime + i * 0.08;
+    gain.gain.setValueAtTime(0, t);
+    gain.gain.linearRampToValueAtTime(0.12, t + 0.03);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(t); osc.stop(t + 0.3);
+  });
+}
+function playCoin() {
+  if (!soundEnabled) return; initAudio();
+  [1318.51, 1567.98].forEach((f, i) => {
+    const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+    osc.type = 'sine'; osc.frequency.value = f;
+    const t = audioCtx.currentTime + i * 0.08;
+    gain.gain.setValueAtTime(0, t);
+    gain.gain.linearRampToValueAtTime(0.1, t + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(t); osc.stop(t + 0.2);
+  });
+}
+
+/* -------- حالة اللعبة -------- */
+let currentQuestions = [];
+let currentIndex = 0;
+let score = 0;
+let correctCount = 0;
+let answered = false;
+let timerInterval = null;
+let timeLeft = 25;
+let QUESTION_TIME = 25;
+let QUESTIONS_PER_ROUND = 25;
+let selectedCategory = 'religious';
+let selectedDifficulty = 'easy';
+let selectedChar = 'wise';
+let streak = 0, maxStreak = 0;
+let helpRemaining = 3, timeHelpRemaining = 1;
+let paused = false;
+let isSurpriseQuestion = false;
+let missedQuestions = [];
+
+/* -------- بيانات اللاعب -------- */
+let player = {
+  name: 'لاعب',
+  coins: 0,
+  xp: 0,
+  level: 1,
+  badges: [],
+  totalGames: 0,
+  totalScore: 0,
+  bestScore: 0
+};
+
+function loadPlayer() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('noorPlayer') || '{}');
+    player = { ...player, ...saved };
+    if (player.badges === undefined) player.badges = [];
+  } catch(e) {}
+  updatePlayerUI();
+}
+function savePlayer() {
+  try { localStorage.setItem('noorPlayer', JSON.stringify(player)); } catch(e) {}
+}
+function updatePlayerUI() {
+  const el = document.getElementById('xpName');
+  if (el) el.textContent = `${player.name} • Lv.${player.level}`;
+  const xf = document.getElementById('xpFill');
+  if (xf) xf.style.width = (player.xp % 100) + '%';
+  const cd = document.getElementById('coinsDisplay');
+  if (cd) cd.textContent = player.coins;
+}
+
+/* -------- بدء -------- */
+function selectCategory(cat) {
+  selectedCategory = cat;
+  initAudio();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  startMusic(cat);
+  startGame();
+}
+
+function selectDiff(diff, btn) {
+  selectedDifficulty = diff;
+  document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (diff === 'easy') QUESTION_TIME = 25;
+  else if (diff === 'medium') QUESTION_TIME = 15;
+  else if (diff === 'hard') QUESTION_TIME = 10;
+  else if (diff === 'expert') QUESTION_TIME = 7;
+  else if (diff === 'legend') QUESTION_TIME = 5;
+}
+
+function selectChar(c, el) {
+  selectedChar = c;
+  document.querySelectorAll('.char-card').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function startGame() {
+  const nameInput = document.getElementById('playerName').value.trim();
+  if (nameInput) player.name = nameInput;
+  savePlayer();
+
+  const all = selectedCategory === 'religious' ? getAllReligious() : getAllScientific();
+  currentQuestions = shuffle(all).slice(0, QUESTIONS_PER_ROUND);
+  currentIndex = 0; score = 0; correctCount = 0; streak = 0; maxStreak = 0;
+  missedQuestions = [];
+  helpRemaining = selectedChar === 'explorer' ? 5 : 3;
+  timeHelpRemaining = 1;
+
+  showScreen('gameScreen');
+  document.getElementById('pauseToggle').style.display = 'block';
+  updateHelpButtons();
+  showQuestion();
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function showQuestion() {
+  answered = false; paused = false;
+  const q = currentQuestions[currentIndex];
+  const total = currentQuestions.length;
+
+  isSurpriseQuestion = Math.random() < 0.08;
+
+  document.getElementById('qNum').textContent = `${currentIndex + 1}/${total}`;
+  document.getElementById('score').textContent = score;
+  document.getElementById('level').textContent = Math.floor(correctCount / 5) + 1;
+  document.getElementById('streak').textContent = streak;
+  document.getElementById('progress').style.width = ((currentIndex / total) * 100) + '%';
+  document.getElementById('questionText').textContent = (isSurpriseQuestion ? '🎪 سؤال مفاجأة! ' : '') + q.q;
+  document.getElementById('questionText').className = 'question-box flash-question' + (isSurpriseQuestion ? ' surprise-question' : '');
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('nextBtn').style.display = 'none';
+  document.getElementById('surpriseBox').style.display = isSurpriseQuestion ? 'block' : 'none';
+
+  const sb = document.getElementById('streakBox');
+  if (streak >= 3) sb.classList.add('hot'); else sb.classList.remove('hot');
+
+  const box = document.getElementById('answersBox');
+  box.innerHTML = '';
+  q.a.forEach((answer, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'answer-btn';
+    btn.textContent = answer;
+    btn.onclick = () => checkAnswer(i, btn);
+    box.appendChild(btn);
+  });
+
+  let t = QUESTION_TIME;
+  if (selectedChar === 'warrior') t += 5;
+  startTimer(t);
+}
+
+function startTimer(t) {
+  stopTimer();
+  timeLeft = t;
+  QUESTION_TIME = t;
+  updateTimerDisplay();
+  timerInterval = setInterval(() => {
+    if (paused) return;
+    timeLeft--;
+    updateTimerDisplay();
+    if (timeLeft <= 5 && timeLeft > 0) playTick();
+    if (timeLeft <= 0) { stopTimer(); timeOut(); }
+  }, 1000);
+}
+function stopTimer() { if (timerInterval) { clearInterval(timerInterval); timerInterval = null; } }
+
+function updateTimerDisplay() {
+  const c = document.getElementById('timerCircle');
+  const t = document.getElementById('timerText');
+  const circ = 251.2;
+  c.style.strokeDashoffset = circ * (1 - timeLeft / QUESTION_TIME);
+  t.textContent = timeLeft;
+  if (timeLeft <= 5) t.classList.add('warning'); else t.classList.remove('warning');
+}
+
+function timeOut() {
+  if (answered) return;
+  answered = true;
+  const q = currentQuestions[currentIndex];
+  const btns = document.querySelectorAll('.answer-btn');
+  btns.forEach(b => b.disabled = true);
+  btns[q.c].classList.add('correct');
+  document.getElementById('feedback').textContent = `⏰ انتهى الوقت! الصحيح: ${q.a[q.c]}`;
+  document.getElementById('feedback').style.color = '#fbbf24';
+  playWrong(); streak = 0;
+  document.getElementById('streak').textContent = streak;
+  missedQuestions.push(q);
+  document.getElementById('nextBtn').style.display = 'block';
+}
+
+function checkAnswer(selected, btn) {
+  if (answered) return;
+  answered = true;
+  stopTimer();
+  const q = currentQuestions[currentIndex];
+  const btns = document.querySelectorAll('.answer-btn');
+  btns.forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+
+  if (selected === q.c) {
+    btn.classList.add('correct');
+    streak++;
+    if (streak > maxStreak) maxStreak = streak;
+    const timeBonus = Math.max(0, timeLeft);
+    let mult = streak >= 5 ? 3 : streak >= 3 ? 2 : 1;
+    if (isSurpriseQuestion) mult *= 5;
+    if (selectedChar === 'wise') mult *= 1.2;
+    const pts = Math.round((10 + timeBonus) * mult);
+    score += pts; correctCount++;
+    const earned = isSurpriseQuestion ? 5 : 1;
+    player.coins += earned;
+    fb.textContent = `✅ صحيح! +${pts} نقطة 💰+${earned}${mult > 1 ? ` (×${mult})` : ''}`;
+    fb.style.color = '#34d399';
+    playCorrect();
+    if (streak >= 3) playStreak();
+    if (isSurpriseQuestion) playCoin();
+    createStarBurst(btn);
+    createCoinFly(btn);
+    savePlayer(); updatePlayerUI();
+  } else {
+    btn.classList.add('wrong');
+    btns[q.c].classList.add('correct');
+    fb.textContent = `❌ خطأ. الصحيح: ${q.a[q.c]}`;
+    fb.style.color = '#f87171';
+    playWrong(); streak = 0;
+    missedQuestions.push(q);
+  }
+
+  document.getElementById('score').textContent = score;
+  document.getElementById('level').textContent = Math.floor(correctCount / 5) + 1;
+  document.getElementById('streak').textContent = streak;
+  const sb = document.getElementById('streakBox');
+  if (streak >= 3) sb.classList.add('hot'); else sb.classList.remove('hot');
+  document.getElementById('nextBtn').style.display = 'block';
+}
+
+function createStarBurst(btn) {
+  const r = btn.getBoundingClientRect();
+  const stars = ['⭐','✨','💫','🌟'];
+  for (let i = 0; i < 6; i++) {
+    const s = document.createElement('div');
+    s.className = 'star-burst';
+    s.textContent = stars[Math.floor(Math.random()*stars.length)];
+    s.style.left = r.left + r.width/2 + 'px';
+    s.style.top = r.top + r.height/2 + 'px';
+    const a = (Math.PI * 2 * i) / 6;
+    s.style.setProperty('--dx', Math.cos(a)*150 + 'px');
+    s.style.setProperty('--dy', Math.sin(a)*150 + 'px');
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 1200);
+  }
+}
+
+function createCoinFly(btn) {
+  const r = btn.getBoundingClientRect();
+  const c = document.createElement('div');
+  c.className = 'coin-fly';
+  c.textContent = '💰';
+  c.style.left = r.left + r.width/2 + 'px';
+  c.style.top = r.top + 'px';
+  document.body.appendChild(c);
+  setTimeout(() => c.remove(), 1000);
+}
+
+function useHelp() {
+  if (answered || helpRemaining <= 0 || paused) return;
+  const q = currentQuestions[currentIndex];
+  const btns = document.querySelectorAll('.answer-btn');
+  const wrongs = [];
+  btns.forEach((b, i) => { if (i !== q.c) wrongs.push(i); });
+  shuffle(wrongs).slice(0, 2).forEach(i => {
+    btns[i].classList.add('eliminated');
+    btns[i].disabled = true;
+  });
+  helpRemaining--;
+  updateHelpButtons();
+}
+function useTimeHelp() {
+  if (answered || timeHelpRemaining <= 0 || paused) return;
+  timeLeft += 10;
+  QUESTION_TIME = Math.max(QUESTION_TIME, timeLeft);
+  updateTimerDisplay();
+  timeHelpRemaining--;
+  updateHelpButtons();
+}
+function updateHelpButtons() {
+  document.getElementById('helpCount').textContent = helpRemaining;
+  document.getElementById('timeCount').textContent = timeHelpRemaining;
+  document.getElementById('helpBtn').disabled = helpRemaining <= 0;
+  document.getElementById('timeBtn').disabled = timeHelpRemaining <= 0;
+}
+
+function nextQuestion() {
+  stopTimer();
+  currentIndex++;
+  if (currentIndex >= currentQuestions.length) endGame();
+  else showQuestion();
+}
+
+function endGame() {
+  stopTimer();
+  document.getElementById('pauseToggle').style.display = 'none';
+  showScreen('resultScreen');
+
+  const total = currentQuestions.length;
+  const percent = Math.round((correctCount / total) * 100);
+  document.getElementById('finalScore').textContent = `${score} نقطة`;
+  let msg = '';
+  if (percent >= 90) msg = `🌟 ممتاز! أجبت على ${correctCount} من ${total} (${percent}%).`;
+  else if (percent >= 70) msg = `👏 جيد جداً! أجبت على ${correctCount} من ${total} (${percent}%).`;
+  else if (percent >= 50) msg = `🙂 جيد. أجبت على ${correctCount} من ${total} (${percent}%).`;
+  else msg = `💪 تحتاج مراجعة. أجبت على ${correctCount} من ${total} (${percent}%).`;
+  document.getElementById('resultMsg').textContent = msg;
+
+  // شارات
+  const badges = [];
+  if (percent === 100) badges.push('🏆 مثالي');
+  if (percent >= 90) badges.push('🥇 محترف');
+  if (maxStreak >= 5) badges.push('🔥 سلسلة نارية');
+  if (maxStreak >= 10) badges.push('⚡ أسطوري');
+  if (score >= 500) badges.push('💰 جامع النقاط');
+  if (score >= 1000) badges.push('💎 مليونير');
+  if (correctCount >= 20) badges.push('🎯 قناص');
+  if (helpRemaining === 3) badges.push('🦸 بلا مساعدة');
+  if (missedQuestions.length === 0) badges.push('💯 بلا خطأ');
+  if (selectedDifficulty === 'legend') badges.push('👑 أسطورة');
+  if (selectedCategory === 'religious') badges.push('🕌 عالم دين');
+  else badges.push('🔬 عالم علوم');
+
+  badges.forEach(b => { if (!player.badges.includes(b)) player.badges.push(b); });
+
+  // XP
+  player.xp += Math.floor(score / 10);
+  const newLevel = Math.floor(player.xp / 100) + 1;
+  if (newLevel > player.level) player.level = newLevel;
+  player.totalGames++;
+  player.totalScore += score;
+  if (score > player.bestScore) player.bestScore = score;
+
+  // صناديق مكافآت
+  const boxCoins = Math.floor(Math.random() * 20) + 5;
+  player.coins += boxCoins;
+  savePlayer();
+  updatePlayerUI();
+
+  document.getElementById('badgesBox').innerHTML =
+    badges.map(b => `<div class="badge">${b}</div>`).join('') +
+    `<div class="badge" style="background:linear-gradient(135deg,#fbbf24,#ec4899);color:#0a0620;">🎁 صندوق مكافأة: +${boxCoins} 💰</div>`;
+
+  saveScore(score, percent);
+  playFinish();
+}
+
+function backToStart() {
+  stopTimer(); paused = false;
+  document.getElementById('pauseOverlay').classList.remove('active');
+  document.getElementById('pauseToggle').style.display = 'none';
+  showScreen('startScreen');
+  loadLeaderboard();
+  updatePlayerUI();
+}
+
+/* -------- Pause -------- */
+document.getElementById('pauseToggle').onclick = () => {
+  paused = true;
+  document.getElementById('pauseOverlay').classList.add('active');
+};
+function resumeGame() {
+  paused = false;
+  document.getElementById('pauseOverlay').classList.remove('active');
+}
+
+/* -------- لوحة الصدارة -------- */
+function saveScore(s, p) {
+  try {
+    let arr = JSON.parse(localStorage.getItem('noorScores') || '[]');
+    arr.push({ score: s, percent: p, name: player.name, date: new Date().toLocaleDateString('ar-EG') });
+    arr.sort((a, b) => b.score - a.score);
+    arr = arr.slice(0, 5);
+    localStorage.setItem('noorScores', JSON.stringify(arr));
+  } catch(e) {}
+}
+function loadLeaderboard() {
+  try {
+    const arr = JSON.parse(localStorage.getItem('noorScores') || '[]');
+    const el = document.getElementById('leaderboardContent');
+    if (!arr.length) { el.innerHTML = '<div class="lb-row">لا توجد نتائج بعد. العب أولاً! 🎮</div>'; return; }
+    el.innerHTML = arr.map((s, i) =>
+      `<div class="lb-row ${i < 3 ? 'top' + (i+1) : ''}">
+        <span>${i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)} ${s.name || 'لاعب'} - ${s.score} نقطة</span>
+        <span>${s.percent}% • ${s.date}</span>
+      </div>`).join('');
+  } catch(e) {}
+}
+
+/* -------- Modals -------- */
+function openModal(html) {
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('active');
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('active');
+}
+
+function openStats() {
+  const avg = player.totalGames ? Math.round(player.totalScore / player.totalGames) : 0;
+  openModal(`
+    <h2>📊 إحصائياتي</h2>
+    <div class="stat-line"><span>👤 الاسم</span><span>${player.name}</span></div>
+    <div class="stat-line"><span>🏅 المستوى</span><span>${player.level}</span></div>
+    <div class="stat-line"><span>✨ XP</span><span>${player.xp}</span></div>
+    <div class="stat-line"><span>💰 العملات</span><span>${player.coins}</span></div>
+    <div class="stat-line"><span>🎮 عدد الجولات</span><span>${player.totalGames}</span></div>
+    <div class="stat-line"><span>⭐ مجموع النقاط</span><span>${player.totalScore}</span></div>
+    <div class="stat-line"><span>🏆 أفضل نتيجة</span><span>${player.bestScore}</span></div>
+    <div class="stat-line"><span>📈 المتوسط</span><span>${avg}</span></div>
+    <div class="stat-line"><span>🏅 عدد الشارات</span><span>${player.badges.length}</span></div>
+    <button class="modal-close" onclick="closeModal()">إغلاق</button>
+  `);
+}
+
+const ALL_BADGES = [
+  {icon:'🏆', name:'مثالي', desc:'100% في جولة'},
+  {icon:'🥇', name:'محترف', desc:'90%+ في جولة'},
+  {icon:'🔥', name:'سلسلة نارية', desc:'5 إجابات صحيحة متتالية'},
+  {icon:'⚡', name:'أسطوري', desc:'10 إجابات صحيحة متتالية'},
+  {icon:'💰', name:'جامع النقاط', desc:'500 نقطة في جولة'},
+  {icon:'💎', name:'مليونير', desc:'1000 نقطة في جولة'},
+  {icon:'🎯', name:'قناص', desc:'20 إجابة صحيحة'},
+  {icon:'🦸', name:'بلا مساعدة', desc:'إكمال بدون مساعدة'},
+  {icon:'💯', name:'بلا خطأ', desc:'إكمال بدون خطأ'},
+  {icon:'👑', name:'أسطورة', desc:'لعب بوضع أسطوري'},
+  {icon:'🕌', name:'عالم دين', desc:'لعب الفئة الدينية'},
+  {icon:'🔬', name:'عالم علوم', desc:'لعب الفئة العلمية'},
+  {icon:'🎪', name:'محظوظ', desc:'الإجابة على سؤال مفاجأة'},
+  {icon:'💪', name:'مثابر', desc:'إكمال 5 جولات'},
+  {icon:'🏅', name:'خبير', desc:'الوصول لمستوى 5'}
+];
+
+function openBadges() {
+  openModal(`
+    <h2>🏅 شاراتي (${player.badges.length}/${ALL_BADGES.length})</h2>
+    <div class="badges-grid">
+      ${ALL_BADGES.map(b => {
+        const unlocked = player.badges.includes(b.name);
+        return `<div class="badge-card ${unlocked ? 'unlocked' : 'locked'}">
+          <div class="icon">${b.icon}</div>
+          <div class="name">${b.name}</div>
+          <div class="desc">${b.desc}</div>
+        </div>`;
+      }).join('')}
+    </div>
+    <button class="modal-close" onclick="closeModal()">إغلاق</button>
+  `);
+}
+
+let shopItems = [
+  { id: 'help1', name: '💡 مساعدة إضافية', desc: '50:50 إضافية', price: 20 },
+  { id: 'time1', name: '⏱️ وقت إضافي', desc: '+10 ثواني إضافية', price: 15 },
+  { id: 'name_change', name: '📝 تغيير الاسم', desc: 'فرصة لتغيير اسمك', price: 5 }
+];
+
+function openShop() {
+  openModal(`
+    <h2>🛒 المتجر - 💰 ${player.coins}</h2>
+    <div class="shop-grid">
+      ${shopItems.map(it => `
+        <div class="shop-item">
+          <div class="info">
+            <div class="name">${it.name}</div>
+            <div class="desc">${it.desc}</div>
+          </div>
+          <button class="shop-buy" ${player.coins < it.price ? 'disabled' : ''} onclick="buyItem('${it.id}')">💰 ${it.price}</button>
+        </div>
+      `).join('')}
+    </div>
+    <button class="modal-close" onclick="closeModal()">إغلاق</button>
+  `);
+}
+function buyItem(id) {
+  const it = shopItems.find(x => x.id === id);
+  if (!it || player.coins < it.price) return;
+  player.coins -= it.price;
+  if (id === 'help1') helpRemaining += 2;
+  else if (id === 'time1') timeHelpRemaining += 2;
+  else if (id === 'name_change') { const n = prompt('الاسم الجديد:'); if (n) player.name = n.trim(); }
+  savePlayer(); updatePlayerUI(); playCoin();
+  openShop();
+  alert('✅ تم الشراء بنجاح!');
+}
+
+function openDaily() {
+  const today = new Date().toDateString();
+  const lastPlayed = localStorage.getItem('lastDaily');
+  const canPlay = lastPlayed !== today;
+  openModal(`
+    <h2>🎁 التحدي اليومي</h2>
+    <p style="text-align:center;margin:15px 0;color:#e9d5ff;">
+      ${canPlay ? 'تحدي اليوم متاح! 10 أسئلة بمكافأة مضاعفة 💰' : '✅ أكملت تحدي اليوم. عد غداً!'}
+    </p>
+    ${canPlay ? '<button class="modal-close" onclick="startDaily()">▶️ ابدأ التحدي</button>' : ''}
+    <button class="modal-close" onclick="closeModal()" style="background:linear-gradient(135deg,#6b7280,#374151);color:#fff;">إغلاق</button>
+  `);
+}
+function startDaily() {
+  closeModal();
+  localStorage.setItem('lastDaily', new Date().toDateString());
+  player.coins += 50;
+  savePlayer(); updatePlayerUI();
+  alert('🎁 حصلت على 50 عملة! ابدأ اللعب الآن.');
+  selectCategory('religious');
+}
+
+function openReview() {
+  const missed = JSON.parse(localStorage.getItem('missedQs') || '[]');
+  if (!missed.length) {
+    openModal(`<h2>📚 مراجعة الأخطاء</h2><p style="text-align:center;margin:20px 0;color:#c4b5fd;">لا توجد أخطاء محفوظة. أحسنت! 🎉</p><button class="modal-close" onclick="closeModal()">إغلاق</button>`);
+    return;
+  }
+  openModal(`
+    <h2>📚 مراجعة الأخطاء (${missed.length})</h2>
+    ${missed.slice(0, 20).map(m => `
+      <div class="review-item">
+        <div class="q">❓ ${m.q}</div>
+        <div class="ans">✅ ${m.ans}</div>
+      </div>
+    `).join('')}
+    <button class="modal-close" onclick="closeModal()">إغلاق</button>
+  `);
+}
+
+function shareResult() {
+  const text = `🎮 لعبت نور العقل وحصلت على ${score} نقطة! جربها أنت أيضاً!`;
+  if (navigator.share) navigator.share({ text });
+  else if (navigator.clipboard) navigator.clipboard.writeText(text).then(() => alert('✅ تم نسخ النتيجة!'));
+  else alert(text);
+}
+
+/* -------- الثيمات -------- */
+const themes = ['royal', 'ocean', 'sunset', 'forest', 'galaxy'];
+let themeIndex = 0;
+document.getElementById('themeToggle').onclick = () => {
+  themeIndex = (themeIndex + 1) % themes.length;
+  document.body.className = 'theme-' + themes[themeIndex];
+  localStorage.setItem('theme', themes[themeIndex]);
+};
+
+/* -------- الصوت -------- */
+document.getElementById('soundToggle').onclick = function() {
+  soundEnabled = !soundEnabled;
+  this.textContent = soundEnabled ? '🔊' : '🔇';
+  if (soundEnabled) {
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    startMusic(selectedCategory);
+  } else stopMusic();
+};
+
+document.body.addEventListener('click', function once() {
+  initAudio();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  document.body.removeEventListener('click', once);
+}, { once: true });
+
+/* -------- تهيئة -------- */
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme) { document.body.className = 'theme-' + savedTheme; themeIndex = themes.indexOf(savedTheme); }
+loadPlayer();
+loadLeaderboard();
+
+// عرض التحدي اليومي إذا متاح
+if (localStorage.getItem('lastDaily') !== new Date().toDateString()) {
+  document.getElementById('dailyChallengeBanner').style.display = 'block';
+}
+</script>
+
+</body>
+</html>
